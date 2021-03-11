@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <EditText
+            android:layout_marginRight="5dp"
+            android:id="@+id/etCari"
+            android:fontFamily="@font/proximanovalight"
+            android:textSize="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_npwpd"
+            android:hint="Cari Golongan ..."/>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:id="@+id/tvKet"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Golongan tidak ditemukan !"
+            android:fontFamily="@font/proximanovalight"
+            android:textSize="16dp"
+            android:textColor="#BE0645"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="10dp"
+            android:id="@+id/rvData"
+            android:layout_width="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"></androidx.recyclerview.widget.RecyclerView>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:layout_gravity="center"
+        android:text="Batal"
+        android:fontFamily="@font/proximanovalight"
+        android:id="@+id/btnBatal"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_batal"
+        android:textSize="14dp"
+        android:layout_width="100dp"></Button>
+
+</LinearLayout>

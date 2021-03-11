@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/content"
+    android:layout_marginBottom="15dp"
+    tools:context=".sinkron.DetailActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:id="@+id/ll">
+
+            <LinearLayout
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.cardview.widget.CardView
+                    android:visibility="gone"
+                    android:padding="10dp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/etIdInc"
+                            android:hint="ID"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:fontFamily="@font/proximanovalight"/>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:id="@+id/bankcardId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_margin="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/proximanovalight"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:editable="false"
+                                android:enabled="false"
+                                android:id="@+id/etNpwpd"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:hint="NPWPD"
+                                android:textColor="#000"
+                                android:fontFamily="@font/proximanovalight"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/proximanovalight"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:editable="false"
+                                android:enabled="false"
+                                android:id="@+id/etNamaTempatUsaha"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:hint="Nama Tempat Usaha"
+                                android:textColor="#000"
+                                android:fontFamily="@font/proximanovalight"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:fontFamily="@font/proximanovalight"
+                            android:textColorHint="#535353"
+                            android:visibility="gone">
+
+                            <EditText
+                                android:editable="false"
+                                android:enabled="false"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:hint="Nama WP"
+                                android:textColor="#000"
+                                android:id="@+id/etNamaWP"
+                                android:fontFamily="@font/proximanovalight"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:editable="false"
+                                android:enabled="false"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:hint="Alamat Usaha"
+                                android:textColor="#000"
+                                android:id="@+id/etAlamatUsaha"
+                                android:fontFamily="@font/proximanovalight"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:editable="false"
+                                android:enabled="false"
+                                android:id="@+id/etKec"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:hint="Kecamatan"
+                                android:textColor="#000"
+                                android:fontFamily="@font/proximanovalight"
+                                android:inputType="textCapCharacters"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:editable="false"
+                                android:enabled="false"
+                                android:id="@+id/etKel"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:hint="Kelurahan"
+                                android:textColor="#000"
+                                android:fontFamily="@font/proximanovalight"
+                                android:inputType="textCapCharacters"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:editable="false"
+                                android:enabled="false"
+                                android:id="@+id/etJenisPajak"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:hint="Jenis Pajak"
+                                android:textColor="#000"
+                                android:fontFamily="@font/proximanovalight"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:editable="false"
+                                android:enabled="false"
+                                android:id="@+id/etGol"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:hint="Golongan"
+                                android:textColor="#000"
+                                android:fontFamily="@font/proximanovalight"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:id="@+id/bankcardId2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <LinearLayout
+                        android:clipToPadding="false"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:editable="false"
+                                android:enabled="false"
+                                android:hint="Latitude"
+                                android:textColor="#000"
+                                android:id="@+id/etLat"
+                                android:fontFamily="@font/proximanovalight"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:textColorHint="#535353">
+
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:editable="false"
+                                android:textColor="#000"
+                                android:enabled="false"
+                                android:hint="Longitude"
+                                android:id="@+id/etLong"
+                                android:fontFamily="@font/proximanovalight"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:id="@+id/bankcardId3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:visibility="invisible">
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:clipToPadding="false"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Foto Objek Pajak"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="5dp"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/proximanovalight"
+                                android:textColor="#5b5b5b"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#797979"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="10dp"/>
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:layout_gravity="center"
+                                android:layout_width="match_parent"
+                                android:id="@+id/rvBerkas"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="5dp">
+
+                            </androidx.recyclerview.widget.RecyclerView>
+
+                        </LinearLayout>
+                    </ScrollView>
+
+                </androidx.cardview.widget.CardView>
+
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Kembali"
+                    android:textColor="#fff"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/btnKembali"
+                    android:fontFamily="@font/proximanovalight"
+                    android:clickable="true"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:background="#3F51B5"
+                    android:layout_marginBottom="10dp"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>
