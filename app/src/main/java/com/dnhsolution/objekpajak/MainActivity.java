@@ -46,6 +46,7 @@ import com.dnhsolution.objekpajak.data_op.DataObjekPajak;
 import com.dnhsolution.objekpajak.database.DatabaseHandler;
 import com.dnhsolution.objekpajak.database.ItemData;
 import com.dnhsolution.objekpajak.handler.HttpHandler;
+import com.dnhsolution.objekpajak.pendataan.MainActivityPendatan;
 import com.dnhsolution.objekpajak.pendataan.PendataanActivity;
 import com.dnhsolution.objekpajak.riwayat.RiwayatActivity;
 import com.dnhsolution.objekpajak.sinkron.SinkronActivity;
@@ -153,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
                     if(show_notif==1){
                         dialogNotif("Pembaruan aplikasi tersedia. Silahkan install aplikasi terbaru !");
                     }else{
-                        startActivity(new Intent(MainActivity.this, PendataanActivity.class));
+//                        startActivity(new Intent(MainActivity.this, PendataanActivity.class));
+                        startActivity(new Intent(MainActivity.this, MainActivityPendatan.class));
                     }
                 }
 

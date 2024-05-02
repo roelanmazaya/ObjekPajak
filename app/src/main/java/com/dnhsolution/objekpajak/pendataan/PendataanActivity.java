@@ -58,6 +58,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -146,8 +148,14 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
     etNamaWP, etNamaTempatUsaha, etJenisPajak, etGolongan, etIdInc;
 
     //khusus reklame
-    EditText etPanjang, etLebar, etTinggi;
+    EditText etPanjang, etLebar, etLokasiPasang, etSisi, etTeks;
+//    Spinner spAllBrand;
+    CheckBox cbKetinggian, cbRokok;
     LinearLayout LReklame;
+    String lain_lain = "0";
+    String ketinggian = "0";
+    String rokok = "0";
+//    String allbrand = "Pilih";
 
     CountDownTimer myTimer = null;
     DatabaseHandler databaseHandler;
@@ -172,6 +180,7 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
     TextView tvNamaUsaha;
 
     Spinner spinJenisPajak, spinGolongan, spinNamaUsaha;
+
     String spJP="", spG="0", spNU="";
     String namaJP="", namaG="", namaNU="";
     ArrayAdapter<ItemJenisPajak> adapterJP;
@@ -212,6 +221,11 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
     ArrayList<ItemKelurahan> kelArrayList = new ArrayList<>();
     String status_data = "";
 
+    String id_pajak = "";
+    String nm_pajak = "";
+
+    TextView tv_pajak;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -220,9 +234,32 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Pendataan dan Pemutakhiran");
+        getSupportActionBar().setTitle("Pendataan Objek Baru");
 
+        id_pajak = getIntent().getStringExtra("id_pajak");
+        
         init();
+
+        if(id_pajak.equalsIgnoreCase("01")){
+            nm_pajak = "Hotel";
+        }else if(id_pajak.equalsIgnoreCase("02")){
+            nm_pajak = "Restoran";
+        }else if(id_pajak.equalsIgnoreCase("03")){
+            nm_pajak = "Hiburan";
+        }else if(id_pajak.equalsIgnoreCase("04")){
+            nm_pajak = "Reklame";
+            LReklame.setVisibility(View.VISIBLE);
+        }else if(id_pajak.equalsIgnoreCase("05")){
+            nm_pajak = "PPJ";
+        }else if(id_pajak.equalsIgnoreCase("06")){
+            nm_pajak = "MBLB";
+        }else if(id_pajak.equalsIgnoreCase("07")){
+            nm_pajak = "Parkir";
+        }else if(id_pajak.equalsIgnoreCase("08")){
+            nm_pajak = "Air Tanah";
+        }
+
+        tv_pajak.setText(nm_pajak);
 
         requestMultiplePermissions(); // check permission
 
@@ -364,11 +401,12 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
         btnSimpan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(PendataanActivity.this, "Tes", Toast.LENGTH_SHORT).show();
 
-                if(spJP.equalsIgnoreCase("06")){
-                    spG="-";
-                    namaG="-";
-                }
+//                if(spJP.equalsIgnoreCase("06")){
+//                    spG="-";
+//                    namaG="-";
+//                }
 
                 if(etAlamat.getText().toString().trim().equalsIgnoreCase("")){
                     etAlamat.requestFocus();
@@ -395,15 +433,16 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                     textView.setTextColor(Color.WHITE);
 
                     snackbar.show();
-                }else if(spJP.equalsIgnoreCase("0")){
-                    Snackbar snackbar = Snackbar
-                            .make(view, "Silahkan Pilih Jenis Pajak !", Snackbar.LENGTH_LONG);
-                    View sbView = snackbar.getView();
-                    TextView textView = (TextView) sbView.findViewById(R.id.snackbar_text);
-                    textView.setTextColor(Color.WHITE);
-
-                    snackbar.show();
-                }else if(spG.equalsIgnoreCase("0")){
+                }
+//                else if(spJP.equalsIgnoreCase("0")){
+//                    Snackbar snackbar = Snackbar
+//                            .make(view, "Silahkan Pilih Jenis Pajak !", Snackbar.LENGTH_LONG);
+//                    View sbView = snackbar.getView();
+//                    TextView textView = (TextView) sbView.findViewById(R.id.snackbar_text);
+//                    textView.setTextColor(Color.WHITE);
+//                    snackbar.show();
+//                }
+                else if(spG.equalsIgnoreCase("0")){
                     Snackbar snackbar = Snackbar
                                 .make(view, "Silahkan Pilih Golongan !", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
@@ -414,77 +453,44 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
 
                 }
                 else{
-
-                    if(etIdInc.getText().toString().equalsIgnoreCase("")){
-                        if(etNamaTempatUsaha.getText().toString().trim().equalsIgnoreCase("")){
-                            etNamaTempatUsaha.requestFocus();
-                            etNamaTempatUsaha.setError("Silahkan isi form ini !");
+                    if(id_pajak.equalsIgnoreCase("04")){
+                        if(etPanjang.getText().toString().trim().equalsIgnoreCase("")){
+                            etPanjang.requestFocus();
+                            etPanjang.setError("Silahkan isi form ini !");
+                        }else if(etLebar.getText().toString().trim().equalsIgnoreCase("")){
+                            etLebar.requestFocus();
+                            etLebar.setError("Silahkan isi form ini !");
+                        }else if(etSisi.getText().toString().trim().equalsIgnoreCase("")){
+                            etSisi.requestFocus();
+                            etSisi.setError("Silahkan isi form ini !");
+                        }else if(etLokasiPasang.getText().toString().trim().equalsIgnoreCase("")){
+                            etLokasiPasang.requestFocus();
+                            etLokasiPasang.setError("Silahkan isi form ini !");
+                        }else if(etTeks.getText().toString().trim().equalsIgnoreCase("")){
+                            etTeks.requestFocus();
+                            etTeks.setError("Silahkan isi form ini !");
                         }else{
-                            if(etLat.getText().toString().equalsIgnoreCase("") || etLong.getText().toString().equalsIgnoreCase("")){
-                                AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
-                                final Dialog alertDialog;
-
-                                    builder.setTitle("Koordinat Lat-Long masih kosong !");
-                                    builder.setMessage("Anda ingin menyimpan atau mencari koordinat Lat-Long lagi ?");
-                                    builder.setPositiveButton("Cari Lokasi", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // Show location settings when the user acknowledges the alert dialog
-                                            //getLoc(1);
-                                            CariLokasi();
-                                        }
-                                    });
-                                    builder.setNegativeButton("Simpan Data", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            InsertDataBaru();
-                                        }
-                                    });
-
-                                    alertDialog = builder.create();
-                                    alertDialog.setCanceledOnTouchOutside(true);
-                                    alertDialog.show();
-                            }else{
-                                //Toast.makeText(PendataanActivity.this, "Insert Baru", Toast.LENGTH_SHORT).show();
-                                InsertDataBaru();
-                            }
+                            lain_lain = etPanjang.getText().toString()+"/"+etLebar.getText().toString()+"/"+etSisi.getText().toString()+"/"+etLokasiPasang.getText().toString()+
+                                    "/"+rokok+"/"+ketinggian+"/"+etTeks.getText().toString();
+                            aksiSimpan();
+//                            Log.d("LAIN", "onClick: "+lain_lain);
                         }
                     }else{
-                        if(etLat.getText().toString().equalsIgnoreCase("") || etLong.getText().toString().equalsIgnoreCase("")){
-                            AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
-                            final Dialog alertDialog;
-
-                            builder.setTitle("Koordinat Lat-Long masih kosong !");
-                            builder.setMessage("Anda ingin menyimpan atau mencari koordinat Lat-Long lagi ?");
-                            builder.setPositiveButton("Cari Lokasi", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    // Show location settings when the user acknowledges the alert dialog
-                                    //getLoc(1);
-                                    CariLokasi();
-                                }
-                            });
-                            builder.setNegativeButton("Simpan Data", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    UpdatePemutakhiran();
-                                    //Toast.makeText(PendataanActivity.this, "Update", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            alertDialog = builder.create();
-                            alertDialog.setCanceledOnTouchOutside(true);
-                            alertDialog.show();
-                        }else{
-                            //Toast.makeText(PendataanActivity.this, "Update", Toast.LENGTH_SHORT).show();
-                            UpdatePemutakhiran();
-                        }
+                        lain_lain = "0";
+//                        Log.d("LAIN", "onClick: "+lain_lain);
+                        aksiSimpan();
                     }
 
                 }
             }
         });
 
-        spinJenisPajak.setEnabled(false);
+//        spinJenisPajak.setEnabled(false);
         spinGolongan.setEnabled(false);
         spinKec.setEnabled(false);
         spinKel.setEnabled(false);
+
+        getGolongan(id_pajak);
 
         getKecamatan();
 
@@ -534,28 +540,34 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
             }
         });
 
-        spinJenisPajak.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                ItemJenisPajak itemJenisPajak = (ItemJenisPajak) parent.getSelectedItem();
-
-                spJP = itemJenisPajak.getKd_jenis_pajak();
-                namaJP = itemJenisPajak.getNama_pajak();
-                tvGol.setText("Pilih Golongan");
-                spG = "0";
-                namaG = "";
-                if(spJP.equalsIgnoreCase("0")){
-
-                }else{
-                   //getGolongan(spJP);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+//        spinJenisPajak.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//                ItemJenisPajak itemJenisPajak = (ItemJenisPajak) parent.getSelectedItem();
+//
+//                spJP = itemJenisPajak.getKd_jenis_pajak();
+//                namaJP = itemJenisPajak.getNama_pajak();
+//                tvGol.setText("Pilih Golongan");
+//                spG = "0";
+//                namaG = "";
+//                Log.d("JENIS_PAJAK_PILIH", "onItemSelected: "+spJP);
+//                if(spJP.equalsIgnoreCase("0")){
+//                    LReklame.setVisibility(View.GONE);
+//                }else{
+//                    if(spJP.equalsIgnoreCase("04")){
+//                        LReklame.setVisibility(View.VISIBLE);
+//                    }else{
+//                        LReklame.setVisibility(View.GONE);
+//                    }
+//                   //getGolongan(spJP);
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//            }
+//        });
 
         spinGolongan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -623,17 +635,30 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
 
                     //Toast.makeText(PendataanActivity.this, status_data, Toast.LENGTH_SHORT).show();
 
-                    int i;
-                    for(i=0;i<pajakArrayList.size();i++){
-                        String p = pajakArrayList.get(i).getKd_jenis_pajak();
-                        String nm_p = pajakArrayList.get(i).getNama_pajak();
-                        if(p.equalsIgnoreCase(jp)){
-                            spinJenisPajak.setSelection(i);
-                            spJP=p;
-                            namaJP=nm_p;
-                            getGolongan(spJP);
-                        }
+                    //edit_pajak_1
+//                    int i;
+//                    for(i=0;i<pajakArrayList.size();i++){
+//                        String p = pajakArrayList.get(i).getKd_jenis_pajak();
+//                        String nm_p = pajakArrayList.get(i).getNama_pajak();
+//                        if(p.equalsIgnoreCase(jp)){
+//                            spinJenisPajak.setSelection(i);
+//                            spJP=p;
+//                            namaJP=nm_p;
+//                            getGolongan(spJP);
+//                        }
+//                    }
+
+                    tv_pajak.setText(inu.getNamajp());
+                    id_pajak = jp;
+                    nm_pajak = inu.getNamajp();
+                    getGolongan(jp);
+
+                    if(id_pajak.equalsIgnoreCase("04")){
+                        LReklame.setVisibility(View.VISIBLE);
+                    }else{
+                        LReklame.setVisibility(View.GONE);
                     }
+
 
                     int x;
                     for(x=0;x<kecArrayList.size();x++){
@@ -651,58 +676,207 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                 //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
             }
 
+
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+//        spAllBrand.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                allbrand = spAllBrand.getSelectedItem().toString();
+//                System.out.println("ALL BRAND : "+allbrand);
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+
+        cbKetinggian.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(cbKetinggian.isChecked() ==  true){
+                    ketinggian = "1";
+                }else{
+                    ketinggian = "0";
+                }
+                System.out.println("KETINGGIAN : "+ketinggian);
+            }
+        });
+
+        cbRokok.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(cbRokok.isChecked() ==  true){
+                    rokok = "1";
+                }else{
+                    rokok = "0";
+                }
+                System.out.println("ROKOK : "+rokok);
+            }
+        });
+    }
+
+    private void aksiSimpan() {
+        if(etIdInc.getText().toString().equalsIgnoreCase("")){
+            if(etNamaTempatUsaha.getText().toString().trim().equalsIgnoreCase("")){
+                etNamaTempatUsaha.requestFocus();
+                etNamaTempatUsaha.setError("Silahkan isi form ini !");
+            }else{
+                if(etLat.getText().toString().equalsIgnoreCase("") || etLong.getText().toString().equalsIgnoreCase("")){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                    final Dialog alertDialog;
+
+                    builder.setTitle("Koordinat Lat-Long masih kosong !");
+                    builder.setMessage("Anda ingin menyimpan atau mencari koordinat Lat-Long lagi ?");
+                    builder.setPositiveButton("Cari Lokasi", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Show location settings when the user acknowledges the alert dialog
+                            //getLoc(1);
+                            CariLokasi();
+                        }
+                    });
+                    builder.setNegativeButton("Simpan Data", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            InsertDataBaru();
+                        }
+                    });
+
+                    alertDialog = builder.create();
+                    alertDialog.setCanceledOnTouchOutside(true);
+                    alertDialog.show();
+                }else{
+                    Toast.makeText(PendataanActivity.this, "Insert Baru", Toast.LENGTH_SHORT).show();
+                    InsertDataBaru();
+                }
+            }
+        }else{
+            if(etLat.getText().toString().equalsIgnoreCase("") || etLong.getText().toString().equalsIgnoreCase("")){
+                AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                final Dialog alertDialog;
+
+                builder.setTitle("Koordinat Lat-Long masih kosong !");
+                builder.setMessage("Anda ingin menyimpan atau mencari koordinat Lat-Long lagi ?");
+                builder.setPositiveButton("Cari Lokasi", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Show location settings when the user acknowledges the alert dialog
+                        //getLoc(1);
+                        CariLokasi();
+                    }
+                });
+                builder.setNegativeButton("Simpan Data", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        UpdatePemutakhiran();
+                        //Toast.makeText(PendataanActivity.this, "Update", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                alertDialog = builder.create();
+                alertDialog.setCanceledOnTouchOutside(true);
+                alertDialog.show();
+            }else{
+                //Toast.makeText(PendataanActivity.this, "Update", Toast.LENGTH_SHORT).show();
+                UpdatePemutakhiran();
+            }
+        }
     }
 
     private void searchLokasi() {
         frmLok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!etAlamat.getText().toString().trim().equalsIgnoreCase("")){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
-                    builder.setTitle("Lokasi sudah ada !");
-                    builder.setMessage("Yakin untuk memperbarui lokasi ?");
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Show location settings when the user acknowledges the alert dialog
-                            CariLokasi();
-                        }
-                    });
-                    builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    });
-                    Dialog alertDialog = builder.create();
-                    alertDialog.setCanceledOnTouchOutside(false);
-                    alertDialog.show();
-                }else{
-                    LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                            !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                        // Build the alert dialog
+                if(id_pajak.equalsIgnoreCase("04")){
+                    if(!etLokasiPasang.getText().toString().trim().equalsIgnoreCase("")){
                         AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
-                        builder.setTitle("Layanan Lokasi tidak Aktif");
-                        builder.setMessage("Hidupkan Layanan Lokasi dan GPS");
+                        builder.setTitle("Lokasi sudah ada !");
+                        builder.setMessage("Yakin untuk memperbarui lokasi ?");
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // Show location settings when the user acknowledges the alert dialog
-                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                startActivity(intent);
+                                CariLokasi();
+                            }
+                        });
+                        builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
                             }
                         });
                         Dialog alertDialog = builder.create();
                         alertDialog.setCanceledOnTouchOutside(false);
                         alertDialog.show();
-                        // getLoc(1);
                     }else{
-                        CariLokasi();
+                        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+                        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                                !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                            // Build the alert dialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                            builder.setTitle("Layanan Lokasi tidak Aktif");
+                            builder.setMessage("Hidupkan Layanan Lokasi dan GPS");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // Show location settings when the user acknowledges the alert dialog
+                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(intent);
+                                }
+                            });
+                            Dialog alertDialog = builder.create();
+                            alertDialog.setCanceledOnTouchOutside(false);
+                            alertDialog.show();
+                            // getLoc(1);
+                        }else{
+                            CariLokasi();
+                        }
+                    }
+                }else{
+                    if(!etAlamat.getText().toString().trim().equalsIgnoreCase("")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                        builder.setTitle("Lokasi sudah ada !");
+                        builder.setMessage("Yakin untuk memperbarui lokasi ?");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // Show location settings when the user acknowledges the alert dialog
+                                CariLokasi();
+                            }
+                        });
+                        builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        Dialog alertDialog = builder.create();
+                        alertDialog.setCanceledOnTouchOutside(false);
+                        alertDialog.show();
+                    }else{
+                        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+                        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                                !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                            // Build the alert dialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                            builder.setTitle("Layanan Lokasi tidak Aktif");
+                            builder.setMessage("Hidupkan Layanan Lokasi dan GPS");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // Show location settings when the user acknowledges the alert dialog
+                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(intent);
+                                }
+                            });
+                            Dialog alertDialog = builder.create();
+                            alertDialog.setCanceledOnTouchOutside(false);
+                            alertDialog.show();
+                            // getLoc(1);
+                        }else{
+                            CariLokasi();
+                        }
                     }
                 }
+
 
 
             }
@@ -711,47 +885,92 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
         btLokasi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!etAlamat.getText().toString().trim().equalsIgnoreCase("")){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
-                    builder.setTitle("Lokasi sudah ada !");
-                    builder.setMessage("Yakin untuk memperbarui lokasi ?");
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Show location settings when the user acknowledges the alert dialog
-                            CariLokasi();
-                        }
-                    });
-                    builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    });
-                    Dialog alertDialog = builder.create();
-                    alertDialog.setCanceledOnTouchOutside(false);
-                    alertDialog.show();
-                }else{
-                    LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                            !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                        // Build the alert dialog
+                if(id_pajak.equalsIgnoreCase("04")){
+                    if(!etLokasiPasang.getText().toString().trim().equalsIgnoreCase("")){
                         AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
-                        builder.setTitle("Layanan Lokasi tidak Aktif");
-                        builder.setMessage("Hidupkan Layanan Lokasi dan GPS");
+                        builder.setTitle("Lokasi sudah ada !");
+                        builder.setMessage("Yakin untuk memperbarui lokasi ?");
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // Show location settings when the user acknowledges the alert dialog
-                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                startActivity(intent);
+                                CariLokasi();
+                            }
+                        });
+                        builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
                             }
                         });
                         Dialog alertDialog = builder.create();
                         alertDialog.setCanceledOnTouchOutside(false);
                         alertDialog.show();
                     }else{
-                        CariLokasi();
+                        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+                        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                                !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                            // Build the alert dialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                            builder.setTitle("Layanan Lokasi tidak Aktif");
+                            builder.setMessage("Hidupkan Layanan Lokasi dan GPS");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // Show location settings when the user acknowledges the alert dialog
+                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(intent);
+                                }
+                            });
+                            Dialog alertDialog = builder.create();
+                            alertDialog.setCanceledOnTouchOutside(false);
+                            alertDialog.show();
+                        }else{
+                            CariLokasi();
+                        }
+                    }
+                }else{
+                    if(!etAlamat.getText().toString().trim().equalsIgnoreCase("")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                        builder.setTitle("Lokasi sudah ada !");
+                        builder.setMessage("Yakin untuk memperbarui lokasi ?");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // Show location settings when the user acknowledges the alert dialog
+                                CariLokasi();
+                            }
+                        });
+                        builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        Dialog alertDialog = builder.create();
+                        alertDialog.setCanceledOnTouchOutside(false);
+                        alertDialog.show();
+                    }else{
+                        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+                        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                                !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                            // Build the alert dialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                            builder.setTitle("Layanan Lokasi tidak Aktif");
+                            builder.setMessage("Hidupkan Layanan Lokasi dan GPS");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // Show location settings when the user acknowledges the alert dialog
+                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(intent);
+                                }
+                            });
+                            Dialog alertDialog = builder.create();
+                            alertDialog.setCanceledOnTouchOutside(false);
+                            alertDialog.show();
+                        }else{
+                            CariLokasi();
+                        }
                     }
                 }
+
             }
         });
     }
@@ -1166,6 +1385,7 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                         spinJenisPajak.setSelection(0);
                         spinGolongan.setSelection(0);
                         status_data = "";
+                        LReklame.setVisibility(View.GONE);
 
 
                         try{
@@ -1203,6 +1423,7 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                                             cek++;
                                             Log.d("jp_status", jenisPajak+"//"+sts);
                                         }
+                                        LReklame.setVisibility(View.VISIBLE);
                                     } else if(jenisPajak.equalsIgnoreCase("06")){
                                         //status 00 = data lebih dari 1
                                         if(sts!="00" || sts!="01"){
@@ -1213,6 +1434,7 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                                         if(sts.equalsIgnoreCase("0")){
                                             cek++;
                                         }
+                                        LReklame.setVisibility(View.GONE);
                                     }
                                     // Do something Here with values
                                 } while(c.moveToNext());
@@ -1275,13 +1497,14 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                     etNamaTempatUsaha.setText("");
                     spinKec.setSelection(0);
                     spinKel.setSelection(0);
-                    spinJenisPajak.setSelection(0);
-                    spinGolongan.setSelection(0);
+//                    spinJenisPajak.setSelection(0);
+//                    spinGolongan.setSelection(0);
                     tvNamaUsaha.setVisibility(View.GONE);
                     vNamaUsaha.setVisibility(View.GONE);
                     spinNamaUsaha.setVisibility(View.GONE);
                     etNamaWP.setVisibility(View.GONE);
                     etNamaTempatUsaha.setVisibility(View.VISIBLE);
+                    LReklame.setVisibility(View.GONE);
                 }
             }
         });
@@ -1356,16 +1579,23 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
         //reklame
         etPanjang = (EditText)findViewById(R.id.etPanjang);
         etLebar = (EditText)findViewById(R.id.etLebar);
-        etTinggi = (EditText)findViewById(R.id.etTinggi);
+        etSisi = (EditText)findViewById(R.id.etSisi);
+        etTeks = (EditText)findViewById(R.id.etTeks);
+//        spAllBrand = (Spinner)findViewById(R.id.spAllBrand);
+        etLokasiPasang = (EditText)findViewById(R.id.etLokasiPasang);
         LReklame = (LinearLayout)findViewById(R.id.LReklame);
+        cbKetinggian = (CheckBox)findViewById(R.id.cbKetinggian);
+        cbRokok = (CheckBox)findViewById(R.id.cbRokok);
 
         LReklame.setVisibility(View.GONE);
+
+        tv_pajak = (TextView)findViewById(R.id.tv_pajak);
 
 
         tvGol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(spJP.equalsIgnoreCase("0")){
+                if(id_pajak.equalsIgnoreCase("0")){
                     Snackbar snackbar = Snackbar
                             .make(view, "Silahkan Pilih Jenis Pajak !", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
@@ -1374,7 +1604,7 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
 
                     snackbar.show();
                 }else{
-                    dialogPeringatan(spJP);
+                    dialogPeringatan(id_pajak);
                 }
             }
         });
@@ -1382,7 +1612,7 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
         LGol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(spJP.equalsIgnoreCase("0")){
+                if(id_pajak.equalsIgnoreCase("0")){
                     Snackbar snackbar = Snackbar
                             .make(view, "Silahkan Pilih Jenis Pajak !", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
@@ -1391,7 +1621,7 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
 
                     snackbar.show();
                 }else{
-                    dialogPeringatan(spJP);
+                    dialogPeringatan(id_pajak);
                 }
             }
         });
@@ -1614,25 +1844,42 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
 
                     if(!status_data.equalsIgnoreCase("0")){
                         Log.i("UpdatePemutakhiran","Double, status"+status_data);
-                        databaseHandler.InsertDataBaru2(new ItemData(
+//                        databaseHandler.InsertDataBaru2(new ItemData(0,
+//                                etIdInc.getText().toString(), namaNU,
+//                                npwpd, etAlamat.getText().toString(), spKec,
+//                                spKel, namaKec, namaKel, namawp, spJP,
+//                                namaJP, namaG, spG, lati, longi, "00", "", today, "", lain_lain
+//                        ));
+                        databaseHandler.InsertDataBaru2(new ItemData(0,
                                 etIdInc.getText().toString(), namaNU,
-                                etAlamat.getText().toString(), namaKec,
-                                namaKel, spJP, namaJP, namaG, spG,
-                                lati, longi,"00", today, spKec, spKel, namawp, npwpd
+                                npwpd, etAlamat.getText().toString(), spKec,
+                                spKel, namaKec, namaKel, namawp, id_pajak,
+                                nm_pajak, namaG, spG, lati, longi, "00", "", today, "", lain_lain
                         ));
                     }else{
                         Log.i("UpdatePemutakhiran","Single, status"+status_data);
-                        databaseHandler.updateDataPemutakhiran(new ItemData(
+//                        databaseHandler.updateDataPemutakhiran(new ItemData(0,
+//                                etIdInc.getText().toString(), namaNU,
+//                                npwpd, etAlamat.getText().toString(), spKec,
+//                                spKel, namaKec, namaKel, namawp, spJP,
+//                                namaJP, namaG, spG, lati, longi, "2", "", today, "", lain_lain
+//                        ));
+
+                        databaseHandler.updateDataPemutakhiran(new ItemData(0,
                                 etIdInc.getText().toString(), namaNU,
-                                etAlamat.getText().toString(), namaKec,
-                                namaKel, spJP, namaJP, namaG, spG,
-                                lati, longi,"2", today, spKec, spKel
+                                npwpd, etAlamat.getText().toString(), spKec,
+                                spKel, namaKec, namaKel, namawp, id_pajak,
+                                nm_pajak, namaG, spG, lati, longi, "2", "", today, "", lain_lain
                         ));
                     }
 
 
                 }catch (Exception e){
                     e.printStackTrace();
+                    String info = e.getMessage();
+                    String activity = "PendataanActivity-Error Update Pemutakhiran - 1879";
+
+                    sendLog(info, activity);
                 }
 
                 if(databaseHandler.equals("")){
@@ -1650,6 +1897,11 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                     spinNamaUsaha.setVisibility(View.GONE);
                     tvNamaUsaha.setVisibility(View.GONE);
                     vNamaUsaha.setVisibility(View.GONE);
+                    etPanjang.setText("");
+                    etLebar.setText("");
+                    etSisi.setText("");
+                    etTeks.setText("");
+                    LReklame.setVisibility(View.GONE);
                     et1.setText("");
                     et2.setText("");
                     et3.setText("");
@@ -1667,13 +1919,14 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                     et1.requestFocus();
                     spinKec.setSelection(0);
                     spinKel.setSelection(0);
-                    spinJenisPajak.setSelection(0);
-                    spinGolongan.setSelection(0);
+//                    spinJenisPajak.setSelection(0);
+//                    spinGolongan.setSelection(0);
                     spinNamaUsaha.setSelection(0);
                     berkasList.clear();
                     bAdapter.notifyDataSetChanged();
                     Toast.makeText(getApplicationContext(),"Berhasil Menyimpan Data ! ", Toast.LENGTH_LONG).show();
-
+//                    startActivity(new Intent(getApplicationContext(), MainActivityPendatan.class));
+                    finish();
                 }
             }
         }else{
@@ -1714,25 +1967,41 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
 
                 if(!status_data.equalsIgnoreCase("0")){
                     Log.i("UpdatePemutakhiran","Double, status"+status_data);
-                    databaseHandler.InsertDataBaru2(new ItemData(
+//                    databaseHandler.InsertDataBaru2(new ItemData(0,
+//                            etIdInc.getText().toString(), namaNU,
+//                            npwpd, etAlamat.getText().toString(), spKec,
+//                            spKel, namaKec, namaKel, namawp, spJP,
+//                            namaJP, namaG, spG, lati, longi, "00", "", today, "", lain_lain
+//                    ));
+                    databaseHandler.InsertDataBaru2(new ItemData(0,
                             etIdInc.getText().toString(), namaNU,
-                            etAlamat.getText().toString(), namaKec,
-                            namaKel, spJP, namaJP, namaG, spG,
-                            lati, longi,"00", today, spKec, spKel, namawp, npwpd
+                            npwpd, etAlamat.getText().toString(), spKec,
+                            spKel, namaKec, namaKel, namawp, id_pajak,
+                            nm_pajak, namaG, spG, lati, longi, "00", "", today, "", lain_lain
                     ));
                 }else{
                     Log.i("UpdatePemutakhiran","Single, status"+status_data);
-                    databaseHandler.updateDataPemutakhiran(new ItemData(
+//                    databaseHandler.updateDataPemutakhiran(new ItemData(0,
+//                            etIdInc.getText().toString(), namaNU,
+//                            npwpd, etAlamat.getText().toString(), spKec,
+//                            spKel, namaKec, namaKel, namawp, spJP,
+//                            namaJP, namaG, spG, lati, longi, "2", "", today, "", lain_lain
+//                    ));
+                    databaseHandler.updateDataPemutakhiran(new ItemData(0,
                             etIdInc.getText().toString(), namaNU,
-                            etAlamat.getText().toString(), namaKec,
-                            namaKel, spJP, namaJP, namaG, spG,
-                            lati, longi,"2", today, spKec, spKel
+                            npwpd, etAlamat.getText().toString(), spKec,
+                            spKel, namaKec, namaKel, namawp, id_pajak,
+                            nm_pajak, namaG, spG, lati, longi, "2", "", today, "", lain_lain
                     ));
                 }
 
 
             }catch (Exception e){
                 e.printStackTrace();
+                String info = e.getMessage();
+                String activity = "PendataanActivity-Error Update Pemutakhiran - 2001";
+
+                sendLog(info, activity);
             }
 
             if(databaseHandler.equals("")){
@@ -1750,6 +2019,11 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                 spinNamaUsaha.setVisibility(View.GONE);
                 tvNamaUsaha.setVisibility(View.GONE);
                 vNamaUsaha.setVisibility(View.GONE);
+                etPanjang.setText("");
+                etLebar.setText("");
+                etSisi.setText("");
+                etTeks.setText("");
+                LReklame.setVisibility(View.GONE);
                 et1.setText("");
                 et2.setText("");
                 et3.setText("");
@@ -1773,7 +2047,8 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                 berkasList.clear();
                 bAdapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(),"Berhasil Menyimpan Data ! ", Toast.LENGTH_LONG).show();
-
+//                startActivity(new Intent(getApplicationContext(), MainActivityPendatan.class));
+                finish();
             }
         }
 
@@ -1831,22 +2106,27 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                         longi = etLong.getText().toString();
                     }
 
-//                    databaseHandler.InsertDataBaru(new ItemData(
+//                    databaseHandler.InsertDataBaru(new ItemData(0,
 //                            "-", etNamaTempatUsaha.getText().toString(),
-//                            etAlamat.getText().toString(), "-", etKecamatan.getText().toString(),
-//                            etKelurahan.getText().toString(), spJP, namaJP, namaG, spG,
-//                            lati, longi, "2", today
+//                            "", etAlamat.getText().toString(), spKec,
+//                            spKel, namaKec, namaKel, "", spJP,
+//                            namaJP, namaG, spG, lati, longi, "2", "", today, "", lain_lain
 //                    ));
 
-                    databaseHandler.InsertDataBaru(new ItemData(
+                    databaseHandler.InsertDataBaru(new ItemData(0,
                             "-", etNamaTempatUsaha.getText().toString(),
-                            etAlamat.getText().toString(), "-", namaKec,
-                            namaKel, spJP, namaJP, namaG, spG,
-                            lati, longi, "2", today, spKec, spKel
+                            "", etAlamat.getText().toString(), spKec,
+                            spKel, namaKec, namaKel, "", id_pajak,
+                            nm_pajak, namaG, spG, lati, longi, "2", "", today, "", lain_lain
                     ));
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    String info = e.getMessage();
+                    String activity = "PendataanActivity-Error Insert Data baru - 2126";
+
+                    sendLog(info, activity);
                 }
                 if(databaseHandler.equals("")){
                     Toast.makeText(getApplicationContext(),"Gagal Menyimpan ! ", Toast.LENGTH_LONG).show();
@@ -1861,6 +2141,11 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                     etGolongan.setText("");
                     etNamaWP.setText("");
                     etNamaTempatUsaha.setText("");
+                    etPanjang.setText("");
+                    etLebar.setText("");
+                    etSisi.setText("");
+                    etTeks.setText("");
+                    LReklame.setVisibility(View.GONE);
                     et1.setText("");
                     et2.setText("");
                     et3.setText("");
@@ -1881,6 +2166,8 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                     berkasList.clear();
                     bAdapter.notifyDataSetChanged();
                     Toast.makeText(getApplicationContext(), "Berhasil Menyimpan Data Baru ! ", Toast.LENGTH_LONG).show();
+//                    startActivity(new Intent(getApplicationContext(), MainActivityPendatan.class));
+                    finish();
                 }
             }
         }else{
@@ -1895,22 +2182,29 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                 if(!etLong.getText().toString().equalsIgnoreCase("")){
                     longi = etLong.getText().toString();
                 }
-//                databaseHandler.InsertDataBaru(new ItemData(
-////                        "-", etNamaTempatUsaha.getText().toString(),
-////                        etAlamat.getText().toString(), "-", etKecamatan.getText().toString(),
-////                        etKelurahan.getText().toString(), spJP, namaJP, namaG, spG,
-////                        lati, longi, "2", today
-////                ));
+//
+//                databaseHandler.InsertDataBaru(new ItemData(0,
+//                        "-", etNamaTempatUsaha.getText().toString(),
+//                        "", etAlamat.getText().toString(), spKec,
+//                        spKel, namaKec, namaKel, "", spJP,
+//                        namaJP, namaG, spG, lati, longi, "2", "", today, "", lain_lain
+//                ));
 
-                databaseHandler.InsertDataBaru(new ItemData(
+                databaseHandler.InsertDataBaru(new ItemData(0,
                         "-", etNamaTempatUsaha.getText().toString(),
-                        etAlamat.getText().toString(), "-", namaKec,
-                        namaKel, spJP, namaJP, namaG, spG,
-                        lati, longi, "2", today, spKec, spKel
+                        "", etAlamat.getText().toString(), spKec,
+                        spKel, namaKec, namaKel, "", id_pajak,
+                        nm_pajak, namaG, spG, lati, longi, "2", "", today, "", lain_lain
                 ));
 
             } catch (Exception e) {
                 e.printStackTrace();
+//                String pesan = e.getMessage();
+                String info = e.getMessage();
+                String activity = "PendataanActivity-Error Insert Data Baru - 2203";
+
+                sendLog(info, activity);
+//                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
             if(databaseHandler.equals("")){
@@ -1926,6 +2220,11 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                 etGolongan.setText("");
                 etNamaWP.setText("");
                 etNamaTempatUsaha.setText("");
+                etPanjang.setText("");
+                etLebar.setText("");
+                etSisi.setText("");
+                etTeks.setText("");
+                LReklame.setVisibility(View.GONE);
                 et1.setText("");
                 et2.setText("");
                 et3.setText("");
@@ -1946,6 +2245,8 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                 berkasList.clear();
                 bAdapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "Berhasil Menyimpan Data Baru ! ", Toast.LENGTH_LONG).show();
+//                startActivity(new Intent(getApplicationContext(), MainActivityPendatan.class));
+                finish();
             }
         }
 
@@ -2007,7 +2308,8 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                 progressDialog.dismiss();
 
                 //mengambil data jenis pajak
-                getDataJP();
+//                getDataJP();
+
 
 
             }
@@ -2152,91 +2454,92 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
     }
 
     //clear - try catch
-    private void getDataJP() {
-        pajakArrayList.clear();
-       // adapterJP.notifyDataSetChanged();
-        final ProgressDialog progressDialog = new ProgressDialog(PendataanActivity.this);
-        progressDialog.setMessage("Mengambil data server...");
-        progressDialog.show();
-        progressDialog.setCanceledOnTouchOutside(false);
-        RequestQueue queue = Volley.newRequestQueue(PendataanActivity.this);
-        String url = Config.URL +"getJenisPajak";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray jsonArray = jsonObject.getJSONArray("result");
-
-                    int i;
-                    pajakArrayList.add(new ItemJenisPajak("0","Pilih Jenis Pajak"));
-                    for (i=0;i<jsonArray.length();i++){
-                        try {
-
-                            JSONObject json = jsonArray.getJSONObject(i);
-                            pajakArrayList.add(new ItemJenisPajak(json.getString("kd_jenis_pajak"),json.getString("nama_pajak")));
-
-                        }catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-
-
-                    adapterJP = new ArrayAdapter<ItemJenisPajak>(PendataanActivity.this, R.layout.spinner_item, pajakArrayList);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    String info = e.getMessage();
-                    String activity = "PendataanActivity-getDataJP";
-
-                    sendLog(info, activity);
-                }
-                //Toast.makeText(LoginActivity.this, response, Toast.LENGTH_SHORT).show();
-                spinJenisPajak.setAdapter(adapterJP);
-                spinJenisPajak.setEnabled(true);
-                progressDialog.dismiss();
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                String info = error.getMessage();
-                String activity = "PendataanActivity-getDataJP";
-
-                sendLog(info, activity);
-                Toast.makeText(PendataanActivity.this, "Respon bermasalah !", Toast.LENGTH_LONG).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("status", "200");
-
-                return params;
-            }
-        };
-        stringRequest.setRetryPolicy(new RetryPolicy() {
-            @Override
-            public int getCurrentTimeout() {
-                return 50000;
-            }
-
-            @Override
-            public int getCurrentRetryCount() {
-                return 50000;
-            }
-
-            @Override
-            public void retry(VolleyError error) throws VolleyError {
-
-            }
-        });
-
-        queue.add(stringRequest);
-    }
+//    private void getDataJP() {
+//        //edit_pajak_2
+//        pajakArrayList.clear();
+//       // adapterJP.notifyDataSetChanged();
+//        final ProgressDialog progressDialog = new ProgressDialog(PendataanActivity.this);
+//        progressDialog.setMessage("Mengambil data server...");
+//        progressDialog.show();
+//        progressDialog.setCanceledOnTouchOutside(false);
+//        RequestQueue queue = Volley.newRequestQueue(PendataanActivity.this);
+//        String url = Config.URL +"getJenisPajak";
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//
+//                try {
+//                    JSONObject jsonObject = new JSONObject(response);
+//                    JSONArray jsonArray = jsonObject.getJSONArray("result");
+//
+//                    int i;
+//                    pajakArrayList.add(new ItemJenisPajak("0","Pilih Jenis Pajak"));
+//                    for (i=0;i<jsonArray.length();i++){
+//                        try {
+//
+//                            JSONObject json = jsonArray.getJSONObject(i);
+//                            pajakArrayList.add(new ItemJenisPajak(json.getString("kd_jenis_pajak"),json.getString("nama_pajak")));
+//
+//                        }catch (JSONException e){
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//
+//                    adapterJP = new ArrayAdapter<ItemJenisPajak>(PendataanActivity.this, R.layout.spinner_item, pajakArrayList);
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    String info = e.getMessage();
+//                    String activity = "PendataanActivity-getDataJP";
+//
+//                    sendLog(info, activity);
+//                }
+//                //Toast.makeText(LoginActivity.this, response, Toast.LENGTH_SHORT).show();
+//                spinJenisPajak.setAdapter(adapterJP);
+//                spinJenisPajak.setEnabled(true);
+//                progressDialog.dismiss();
+//
+//
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                progressDialog.dismiss();
+//                String info = error.getMessage();
+//                String activity = "PendataanActivity-getDataJP";
+//
+//                sendLog(info, activity);
+//                Toast.makeText(PendataanActivity.this, "Respon bermasalah !", Toast.LENGTH_LONG).show();
+//            }
+//        }){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                params.put("status", "200");
+//
+//                return params;
+//            }
+//        };
+//        stringRequest.setRetryPolicy(new RetryPolicy() {
+//            @Override
+//            public int getCurrentTimeout() {
+//                return 50000;
+//            }
+//
+//            @Override
+//            public int getCurrentRetryCount() {
+//                return 50000;
+//            }
+//
+//            @Override
+//            public void retry(VolleyError error) throws VolleyError {
+//
+//            }
+//        });
+//
+//        queue.add(stringRequest);
+//    }
 
     private void getDataByNPWPD(String npwpd) {
         namausahaArrayList.clear();
@@ -2322,10 +2625,11 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
         progressDialog.setCanceledOnTouchOutside(false);
         RequestQueue queue = Volley.newRequestQueue(PendataanActivity.this);
         String url = Config.URL +"getGolongan";
+        System.out.println(url);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                System.out.println(response);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("result");
@@ -2604,7 +2908,7 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                 // todo goto back activity from here
                 System.out.println("Back Top");
                 gpsTracker.stopUsingGPS();
-                Intent intent = new Intent(PendataanActivity.this, MainActivity.class);
+                Intent intent = new Intent(PendataanActivity.this, MainActivityPendatan.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
@@ -2690,28 +2994,29 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
         super.onResume();
         int bks = rvBerkas.getAdapter().getItemCount();
 
-        if(!etAlamat.getText().toString().trim().equalsIgnoreCase("")){
-            if(bks==0) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
-                builder.setTitle("Lokasi sudah ada !");
-                builder.setMessage("Yakin untuk memperbarui lokasi ?");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // Show location settings when the user acknowledges the alert dialog
-                        CariLokasi();
-                    }
-                });
-                builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+        if(id_pajak.equalsIgnoreCase("04")){
+            if(!etLokasiPasang.getText().toString().trim().equalsIgnoreCase("")){
+                if(bks==0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                    builder.setTitle("Lokasi sudah ada !");
+                    builder.setMessage("Yakin untuk memperbarui lokasi ?");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Show location settings when the user acknowledges the alert dialog
+                            CariLokasi();
+                        }
+                    });
+                    builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                    }
-                });
-                Dialog alertDialog = builder.create();
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.show();
-            }
-        }else{
+                        }
+                    });
+                    Dialog alertDialog = builder.create();
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.show();
+                }
+            }else{
 
                 LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
                 if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
@@ -2735,7 +3040,56 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                     CariLokasi();
                 }
 
+            }
+        }else{
+            if(!etAlamat.getText().toString().trim().equalsIgnoreCase("")){
+                if(bks==0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                    builder.setTitle("Lokasi sudah ada !");
+                    builder.setMessage("Yakin untuk memperbarui lokasi ?");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Show location settings when the user acknowledges the alert dialog
+                            CariLokasi();
+                        }
+                    });
+                    builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+                    Dialog alertDialog = builder.create();
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.show();
+                }
+            }else{
+
+                LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                        !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    // Build the alert dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PendataanActivity.this);
+                    builder.setTitle("Layanan Lokasi tidak Aktif");
+                    builder.setMessage("Hidupkan Layanan Lokasi dan GPS");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Show location settings when the user acknowledges the alert dialog
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(intent);
+                        }
+                    });
+                    Dialog alertDialog = builder.create();
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.show();
+                    // getLoc(1);
+                }else{
+                    CariLokasi();
+                }
+
+            }
         }
+
     }
 
     @Override
@@ -2826,11 +3180,15 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
 
             ((EditText)findViewById(R.id.etLat)).setText(String.valueOf(gpsTracker.getLatitude()));
             ((EditText)findViewById(R.id.etLong)).setText(String.valueOf(gpsTracker.getLongitude()));
-            ((EditText)findViewById(R.id.etAlamatUsaha)).setText(alamat);
+            if(id_pajak.equalsIgnoreCase("04")){
+                ((EditText)findViewById(R.id.etLokasiPasang)).setText(alamat);
+            }else {
+                ((EditText)findViewById(R.id.etAlamatUsaha)).setText(alamat);
+            }
             ((EditText)findViewById(R.id.etKec)).setText(kec);
             ((EditText)findViewById(R.id.etKel)).setText(kel);
 
-            System.out.println(alamat);
+            System.out.println("lokasi :"+alamat);
             //Toast.makeText(PendataanActivity.this, alamat, Toast.LENGTH_SHORT).show();
 
         }
@@ -3146,6 +3504,10 @@ public class PendataanActivity extends AppCompatActivity implements LocationList
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private void cekForm(String jp){
+
     }
 
 

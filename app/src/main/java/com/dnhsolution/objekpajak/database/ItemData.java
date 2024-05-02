@@ -21,6 +21,7 @@ public class ItemData {
     String tgl_insert;
     String tgl_update;
     String tgl_sync;
+    String lainnya;
 
     public ItemData() {
     }
@@ -175,6 +176,33 @@ public class ItemData {
         this.lati = lati;
         this.longi = longi;
 
+    }
+
+    //perbaikan 12032021
+
+
+    public ItemData(int id_data, String id_inc, String nama_usaha, String npwpd, String alamat_usaha, String kodekec, String kodekel, String namakec, String namakel, String namawp, String jenis_pajak, String namapajak, String golongan, String id_op, String lati, String longi, String status, String tgl_insert, String tgl_update, String tgl_sync, String lainnya) {
+        this.id_data = id_data;
+        this.id_inc = id_inc;
+        this.nama_usaha = nama_usaha;
+        this.npwpd = npwpd;
+        this.alamat_usaha = alamat_usaha;
+        this.kodekec = kodekec;
+        this.kodekel = kodekel;
+        this.namakec = namakec;
+        this.namakel = namakel;
+        this.namawp = namawp;
+        this.jenis_pajak = jenis_pajak;
+        this.namapajak = namapajak;
+        this.golongan = golongan;
+        this.id_op = id_op;
+        this.lati = lati;
+        this.longi = longi;
+        this.status = status;
+        this.tgl_insert = tgl_insert;
+        this.tgl_update = tgl_update;
+        this.tgl_sync = tgl_sync;
+        this.lainnya = lainnya;
     }
 
     public int getId_data() {
@@ -335,5 +363,13 @@ public class ItemData {
 
     public void setNamapajak(String namapajak) {
         this.namapajak = namapajak;
+    }
+
+    public String getLainnya() {
+        return lainnya;
+    }
+
+    public void setLainnya(String lainnya) {
+        this.lainnya = lainnya;
     }
 }

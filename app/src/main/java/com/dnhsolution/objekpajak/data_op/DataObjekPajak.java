@@ -10,10 +10,12 @@ import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,20 +23,37 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.dnhsolution.objekpajak.MainActivity;
 import com.dnhsolution.objekpajak.R;
+import com.dnhsolution.objekpajak.config.Config;
 import com.dnhsolution.objekpajak.data_op.model.ItemFilter;
 import com.dnhsolution.objekpajak.data_op.model.ItemNamaWP;
 import com.dnhsolution.objekpajak.data_op.model.ItemUsaha;
 import com.dnhsolution.objekpajak.database.DatabaseHandler;
 import com.dnhsolution.objekpajak.database.ItemData;
 import com.dnhsolution.objekpajak.pendataan.PendataanActivity;
+import com.dnhsolution.objekpajak.pendataan.model.ItemGolongan;
 import com.dnhsolution.objekpajak.pendataan.model.ItemNamaUsaha;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataObjekPajak extends AppCompatActivity {
 
@@ -64,6 +83,13 @@ public class DataObjekPajak extends AppCompatActivity {
     DatabaseHandler databaseHandler;
     CardView cvDetail;
 
+
+    EditText etPanjang, etLebar, etLokasiPasang;
+    EditText  etSisi, etTeks;
+    CheckBox cbKetinggian;
+    CheckBox cbRokok;
+    LinearLayout LReklame;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,45 +100,200 @@ public class DataObjekPajak extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Data Objek Pajak");
 
-        databaseHandler=new DatabaseHandler(DataObjekPajak.this);
-        etAlamat = (EditText)findViewById(R.id.etAlamatUsaha);
-        etNPWPD = (EditText)findViewById(R.id.etNPWPD);
-        etKecamatan = (EditText)findViewById(R.id.etKec);
-        etKelurahan = (EditText)findViewById(R.id.etKel);
-        etNamaWP = (EditText)findViewById(R.id.etNamaWP);
-        etNamaWPC = (EditText)findViewById(R.id.etNamaWPC);
-        etNamaTempatUsaha = (EditText)findViewById(R.id.etNamaTempatUsaha);
-        etNamaTempatUsahaC = (EditText)findViewById(R.id.etNamaTempatUsahaC);
-        etJenisPajak = (EditText)findViewById(R.id.etJenisPajak);
-        etGolongan = (EditText)findViewById(R.id.etGol);
-        spinFilter = (Spinner)findViewById(R.id.spFilter);
-        spinNamaWP = (Spinner)findViewById(R.id.spNamaWP);
-        spinNamaUsaha = (Spinner)findViewById(R.id.spNamaUsaha);
-        spinNUsaha = (Spinner)findViewById(R.id.spNUsaha);
-        tvUsaha = (TextView)findViewById(R.id.tvNamaUsaha);
-        vUsaha = (View)findViewById(R.id.vNamaUsaha);
-        cvDetail = (CardView)findViewById(R.id.cvDetail);
+        init();
 
-        et1 = (EditText)findViewById(R.id.et1);
-        et2 = (EditText)findViewById(R.id.et2);
-        et3 = (EditText)findViewById(R.id.et3);
-        et4 = (EditText)findViewById(R.id.et4);
-        et5 = (EditText)findViewById(R.id.et5);
-        et6 = (EditText)findViewById(R.id.et6);
-        et7 = (EditText)findViewById(R.id.et7);
-        et8 = (EditText)findViewById(R.id.et8);
-        et9 = (EditText)findViewById(R.id.et9);
-        et10 = (EditText)findViewById(R.id.et10);
-        et11 = (EditText)findViewById(R.id.et11);
-        et12 = (EditText)findViewById(R.id.et12);
+        filterByNpwpd();
 
-        Lnamawp = (LinearLayout)findViewById(R.id.Lnamawp);
-        Lnpwpd = (LinearLayout)findViewById(R.id.Lnpwpd);
-        Lnamausaha = (LinearLayout)findViewById(R.id.Lnamausaha);
+        ivNamaWPC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(etNamaWPC.getText().toString().trim().equalsIgnoreCase("")){
+                    Snackbar.make(view, "Data tidak ditemukan !", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }else{
 
-        ivNamaUsahaC = (ImageView)findViewById(R.id.Ivnamausahac);
-        ivNamaWPC = (ImageView)findViewById(R.id.Ivnamawpc);
+                    getDataByFilter(spFilter);
+                    spinNamaUsaha.setVisibility(View.GONE);
+                    spinNUsaha.setVisibility(View.GONE);
+                    tvUsaha.setVisibility(View.GONE);
+                    vUsaha.setVisibility(View.GONE);
+                }
+            }
+        });
 
+        ivNamaUsahaC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(etNamaTempatUsahaC.getText().toString().trim().equalsIgnoreCase("")){
+                    Snackbar.make(view, "Data tidak ditemukan !", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }else{
+                    getDataByFilter(spFilter);
+                    spinNamaWP.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        getDataFilter();
+
+        spinAction();
+
+    }
+
+    private void spinAction() {
+
+        spinFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                ItemFilter itemFilter = (ItemFilter) parent.getSelectedItem();
+
+                spFilter = itemFilter.getKd_filter();
+
+                etNamaWP.setText("");
+                //alias dari id_op
+                etNPWPD.setText("");
+                etNamaTempatUsaha.setText("");
+                etAlamat.setText("");
+                etKecamatan.setText("");
+                etKelurahan.setText("");
+                etJenisPajak.setText("");
+                etGolongan.setText("");
+                spinNUsaha.setVisibility(View.GONE);
+                tvUsaha.setVisibility(View.GONE);
+                vUsaha.setVisibility(View.GONE);
+
+                if(spFilter.equalsIgnoreCase("0")){
+                    Lnamawp.setVisibility(View.GONE);
+                    Lnamausaha.setVisibility(View.GONE);
+                    Lnpwpd.setVisibility(View.GONE);
+                    spinNamaUsaha.setVisibility(View.GONE);
+                    spinNamaWP.setVisibility(View.GONE);
+                }else if (spFilter.equalsIgnoreCase("1")){
+                    Lnamawp.setVisibility(View.VISIBLE);
+                    Lnamausaha.setVisibility(View.GONE);
+                    Lnpwpd.setVisibility(View.GONE);
+                    spinNamaUsaha.setVisibility(View.GONE);
+                }else if (spFilter.equalsIgnoreCase("2")){
+                    Lnamawp.setVisibility(View.GONE);
+                    Lnamausaha.setVisibility(View.VISIBLE);
+                    Lnpwpd.setVisibility(View.GONE);
+                    spinNamaWP.setVisibility(View.GONE);
+                    spinNamaUsaha.setVisibility(View.GONE);
+                }else if (spFilter.equalsIgnoreCase("3")){
+                    Lnamawp.setVisibility(View.GONE);
+                    Lnamausaha.setVisibility(View.GONE);
+                    Lnpwpd.setVisibility(View.VISIBLE);
+                    spinNamaWP.setVisibility(View.GONE);
+                    spinNamaUsaha.setVisibility(View.GONE);
+                }
+
+                //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinNamaWP.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                ItemNamaWP itemNamaWP = (ItemNamaWP) parent.getSelectedItem();
+
+                spNamaWP = itemNamaWP.getKd_data();
+
+                if(spNamaWP.equalsIgnoreCase("0")){
+                    etNamaWP.setText("");
+                    //alias dari id_op
+                    etNPWPD.setText("");
+                    etNamaTempatUsaha.setText("");
+                    etAlamat.setText("");
+                    etKecamatan.setText("");
+                    etKelurahan.setText("");
+                    etJenisPajak.setText("");
+                    etGolongan.setText("");
+                }else{
+                    getDetailData(spNamaWP, spFilter);
+                }
+
+                //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinNamaUsaha.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                ItemUsaha itemUsaha = (ItemUsaha) parent.getSelectedItem();
+
+                spNamaUsaha = itemUsaha.getKd_data();
+
+                if(spNamaUsaha.equalsIgnoreCase("0")){
+                    etNamaWP.setText("");
+                    //alias dari id_op
+                    etNPWPD.setText("");
+                    etNamaTempatUsaha.setText("");
+                    etAlamat.setText("");
+                    etKecamatan.setText("");
+                    etKelurahan.setText("");
+                    etJenisPajak.setText("");
+                    etGolongan.setText("");
+                }else{
+//                    getDetailData(spNamaUsaha, spFilter);
+                    getDetailData2(spNamaUsaha);
+//                    Toast.makeText(DataObjekPajak.this, "spinNamaUsaha", Toast.LENGTH_SHORT).show();
+                }
+
+                //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinNUsaha.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                ItemNamaUsaha itemNamaUsaha = (ItemNamaUsaha) parent.getSelectedItem();
+
+                spNUsaha = itemNamaUsaha.getId_data();
+
+                if(spNUsaha.equalsIgnoreCase("0")){
+                    etNamaWP.setText("");
+                    //alias dari id_op
+                    etNPWPD.setText("");
+                    etNamaTempatUsaha.setText("");
+                    etAlamat.setText("");
+                    etKecamatan.setText("");
+                    etKelurahan.setText("");
+                    etJenisPajak.setText("");
+                    etGolongan.setText("");
+                }else{
+                    etAlamat.setText(itemNamaUsaha.getAlamat());
+                    etKecamatan.setText(itemNamaUsaha.getKecamatan());
+                    etKelurahan.setText(itemNamaUsaha.getKelurahan());
+                    etJenisPajak.setText(itemNamaUsaha.getJenispajak());
+                    etGolongan.setText(itemNamaUsaha.getGolongan());
+                }
+
+                //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void filterByNpwpd() {
         et1.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -371,189 +552,199 @@ public class DataObjekPajak extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        ivNamaWPC.setOnClickListener(new View.OnClickListener() {
+    private void init() {
+        databaseHandler=new DatabaseHandler(DataObjekPajak.this);
+        etAlamat = (EditText)findViewById(R.id.etAlamatUsaha);
+        etNPWPD = (EditText)findViewById(R.id.etNPWPD);
+        etKecamatan = (EditText)findViewById(R.id.etKec);
+        etKelurahan = (EditText)findViewById(R.id.etKel);
+        etNamaWP = (EditText)findViewById(R.id.etNamaWP);
+        etNamaWPC = (EditText)findViewById(R.id.etNamaWPC);
+        etNamaTempatUsaha = (EditText)findViewById(R.id.etNamaTempatUsaha);
+        etNamaTempatUsahaC = (EditText)findViewById(R.id.etNamaTempatUsahaC);
+        etJenisPajak = (EditText)findViewById(R.id.etJenisPajak);
+        etGolongan = (EditText)findViewById(R.id.etGol);
+        spinFilter = (Spinner)findViewById(R.id.spFilter);
+        spinNamaWP = (Spinner)findViewById(R.id.spNamaWP);
+        spinNamaUsaha = (Spinner)findViewById(R.id.spNamaUsaha);
+        spinNUsaha = (Spinner)findViewById(R.id.spNUsaha);
+        tvUsaha = (TextView)findViewById(R.id.tvNamaUsaha);
+        vUsaha = (View)findViewById(R.id.vNamaUsaha);
+        cvDetail = (CardView)findViewById(R.id.cvDetail);
+
+        et1 = (EditText)findViewById(R.id.et1);
+        et2 = (EditText)findViewById(R.id.et2);
+        et3 = (EditText)findViewById(R.id.et3);
+        et4 = (EditText)findViewById(R.id.et4);
+        et5 = (EditText)findViewById(R.id.et5);
+        et6 = (EditText)findViewById(R.id.et6);
+        et7 = (EditText)findViewById(R.id.et7);
+        et8 = (EditText)findViewById(R.id.et8);
+        et9 = (EditText)findViewById(R.id.et9);
+        et10 = (EditText)findViewById(R.id.et10);
+        et11 = (EditText)findViewById(R.id.et11);
+        et12 = (EditText)findViewById(R.id.et12);
+
+        Lnamawp = (LinearLayout)findViewById(R.id.Lnamawp);
+        Lnpwpd = (LinearLayout)findViewById(R.id.Lnpwpd);
+        Lnamausaha = (LinearLayout)findViewById(R.id.Lnamausaha);
+
+        ivNamaUsahaC = (ImageView)findViewById(R.id.Ivnamausahac);
+        ivNamaWPC = (ImageView)findViewById(R.id.Ivnamawpc);
+
+        //reklame
+        etPanjang = (EditText)findViewById(R.id.etPanjang);
+        etLebar = (EditText)findViewById(R.id.etLebar);
+        etSisi = (EditText)findViewById(R.id.etSisi);
+        etTeks = (EditText)findViewById(R.id.etTeks);
+        etLokasiPasang = (EditText)findViewById(R.id.etLokasiPasang);
+        LReklame = (LinearLayout)findViewById(R.id.LReklame);
+
+        cbKetinggian = (CheckBox)findViewById(R.id.cbKetinggian);
+        cbRokok = (CheckBox)findViewById(R.id.cbRokok);
+
+        LReklame.setVisibility(View.GONE);
+    }
+
+    private void getDetailData2(String id_inc) {
+        final ProgressDialog progressDialog = new ProgressDialog(DataObjekPajak.this);
+        progressDialog.setMessage("Mengambil data server...");
+        progressDialog.show();
+        progressDialog.setCanceledOnTouchOutside(false);
+        RequestQueue queue = Volley.newRequestQueue(DataObjekPajak.this);
+        String url = Config.URL +"getDetailFilter";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            public void onClick(View view) {
-                if(etNamaWPC.getText().toString().trim().equalsIgnoreCase("")){
-                    Snackbar.make(view, "Data tidak ditemukan !", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }else{
+            public void onResponse(String response) {
 
-                    getDataByFilter(spFilter);
-                    spinNamaUsaha.setVisibility(View.GONE);
-                    spinNUsaha.setVisibility(View.GONE);
-                    tvUsaha.setVisibility(View.GONE);
-                    vUsaha.setVisibility(View.GONE);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("result");
+                    JSONObject json = jsonArray.getJSONObject(0);
 
+                    String npwpd = "-";
+                    String nama_wp = "-";
+                    String golongan = "-";
+                    if(!json.getString("NAMA_WP").equalsIgnoreCase("null")){
+                        nama_wp = json.getString("NAMA_WP");
+                    }
 
-                }
-            }
-        });
+                    if(!json.getString("NPWPD").equalsIgnoreCase("null")){
+                        npwpd = json.getString("NPWPD");
+                    }
 
-        ivNamaUsahaC.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(etNamaTempatUsahaC.getText().toString().trim().equalsIgnoreCase("")){
-                    Snackbar.make(view, "Data tidak ditemukan !", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }else{
-                    getDataByFilter(spFilter);
-                    spinNamaWP.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        getDataFilter();
-
-        spinFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                ItemFilter itemFilter = (ItemFilter) parent.getSelectedItem();
-
-                spFilter = itemFilter.getKd_filter();
-
-                etNamaWP.setText("");
-                //alias dari id_op
-                etNPWPD.setText("");
-                etNamaTempatUsaha.setText("");
-                etAlamat.setText("");
-                etKecamatan.setText("");
-                etKelurahan.setText("");
-                etJenisPajak.setText("");
-                etGolongan.setText("");
-                spinNUsaha.setVisibility(View.GONE);
-                tvUsaha.setVisibility(View.GONE);
-                vUsaha.setVisibility(View.GONE);
-
-                if(spFilter.equalsIgnoreCase("0")){
-                    Lnamawp.setVisibility(View.GONE);
-                    Lnamausaha.setVisibility(View.GONE);
-                    Lnpwpd.setVisibility(View.GONE);
-                    spinNamaUsaha.setVisibility(View.GONE);
-                    spinNamaWP.setVisibility(View.GONE);
-                }else if (spFilter.equalsIgnoreCase("1")){
-                    Lnamawp.setVisibility(View.VISIBLE);
-                    Lnamausaha.setVisibility(View.GONE);
-                    Lnpwpd.setVisibility(View.GONE);
-                    spinNamaUsaha.setVisibility(View.GONE);
-                }else if (spFilter.equalsIgnoreCase("2")){
-                    Lnamawp.setVisibility(View.GONE);
-                    Lnamausaha.setVisibility(View.VISIBLE);
-                    Lnpwpd.setVisibility(View.GONE);
-                    spinNamaWP.setVisibility(View.GONE);
-                    spinNamaUsaha.setVisibility(View.GONE);
-                }else if (spFilter.equalsIgnoreCase("3")){
-                    Lnamawp.setVisibility(View.GONE);
-                    Lnamausaha.setVisibility(View.GONE);
-                    Lnpwpd.setVisibility(View.VISIBLE);
-                    spinNamaWP.setVisibility(View.GONE);
-                    spinNamaUsaha.setVisibility(View.GONE);
-                }
-
-                //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        spinNamaWP.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                ItemNamaWP itemNamaWP = (ItemNamaWP) parent.getSelectedItem();
-
-                spNamaWP = itemNamaWP.getKd_data();
-
-                if(spNamaWP.equalsIgnoreCase("0")){
-                    etNamaWP.setText("");
+                    if(!json.getString("NAMA_GOLONGAN").equalsIgnoreCase("null")){
+                        golongan = json.getString("NAMA_GOLONGAN");
+                    }
+                    etNamaWP.setText(nama_wp);
                     //alias dari id_op
-                    etNPWPD.setText("");
-                    etNamaTempatUsaha.setText("");
-                    etAlamat.setText("");
-                    etKecamatan.setText("");
-                    etKelurahan.setText("");
-                    etJenisPajak.setText("");
-                    etGolongan.setText("");
-                }else{
-                    getDetailData(spNamaWP, spFilter);
-                }
+                    etNPWPD.setText(npwpd);
+                    etNamaTempatUsaha.setText(json.getString("NAMA_USAHA"));
+                    etAlamat.setText(json.getString("ALAMAT_USAHA"));
+                    etKecamatan.setText(json.getString("KECAMATAN"));
+                    etKelurahan.setText(json.getString("KELURAHAN"));
+                    etJenisPajak.setText(json.getString("NAMA_PAJAK"));
+                    etGolongan.setText(golongan);
 
-                //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
+                    if(json.getString("JENIS_PAJAK").equalsIgnoreCase("04")){
+                        LReklame.setVisibility(View.VISIBLE);
+                        String panjang = "-", lebar = "-", sisi = "-", lokasi = "-", rokok = "0", ketinggian = "0", teks = "-" ;
+
+                        if(!json.getString("PANJANG").equalsIgnoreCase("null")){
+                            panjang = json.getString("PANJANG");
+                        }
+
+                        if(!json.getString("LEBAR").equalsIgnoreCase("null")){
+                            lebar = json.getString("LEBAR");
+                        }
+
+                        if(!json.getString("TINGGI").equalsIgnoreCase("null")){
+                            ketinggian = json.getString("TINGGI");
+                        }
+
+                        if(!json.getString("LOKASI_PASANG").equalsIgnoreCase("null")){
+                            lokasi = json.getString("LOKASI_PASANG");
+                        }
+
+                        if(!json.getString("SISI").equalsIgnoreCase("null")){
+                            sisi = json.getString("SISI");
+                        }
+                        if(!json.getString("TEKS").equalsIgnoreCase("null")){
+                            teks = json.getString("TEKS");
+                        }
+                        if(!json.getString("ROKOK").equalsIgnoreCase("null")){
+                            rokok = json.getString("ROKOK");
+                        }
+                        etPanjang.setText(panjang);
+                        etLebar.setText(lebar);
+                        etSisi.setText(sisi);
+                        if(ketinggian.equalsIgnoreCase("0")){
+                            cbKetinggian.setChecked(false);
+                        }else {
+                            cbKetinggian.setChecked(true);
+                        }
+                        if(rokok.equalsIgnoreCase("0")){
+                            cbRokok.setChecked(false);
+                        }else {
+                            cbRokok.setChecked(true);
+                        }
+                        etTeks.setText(teks);
+                        etLokasiPasang.setText(lokasi);
+                    }else{
+                        LReklame.setVisibility(View.GONE);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    String info = e.getMessage();
+                    String activity = "PendataanActivity-getGolongan";
+                }
+                //Toast.makeText(LoginActivity.this, response, Toast.LENGTH_SHORT).show();
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                String info = error.getMessage();
+                String activity = "PendataanActivity-getGolongan";
+
+                Toast.makeText(DataObjekPajak.this, "Respon bermasalah !", Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("ID_INC", id_inc);
+//                params.put("value", cari);
+//                System.out.println(spFilter+"//"+cari);
+
+                return params;
+            }
+        };
+        stringRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
             }
         });
 
-        spinNamaUsaha.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                ItemUsaha itemUsaha = (ItemUsaha) parent.getSelectedItem();
-
-                spNamaUsaha = itemUsaha.getKd_data();
-
-                if(spNamaUsaha.equalsIgnoreCase("0")){
-                    etNamaWP.setText("");
-                    //alias dari id_op
-                    etNPWPD.setText("");
-                    etNamaTempatUsaha.setText("");
-                    etAlamat.setText("");
-                    etKecamatan.setText("");
-                    etKelurahan.setText("");
-                    etJenisPajak.setText("");
-                    etGolongan.setText("");
-                }else{
-                    getDetailData(spNamaUsaha, spFilter);
-                }
-
-                //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        spinNUsaha.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                ItemNamaUsaha itemNamaUsaha = (ItemNamaUsaha) parent.getSelectedItem();
-
-                spNUsaha = itemNamaUsaha.getId_data();
-
-                if(spNUsaha.equalsIgnoreCase("0")){
-                    etNamaWP.setText("");
-                    //alias dari id_op
-                    etNPWPD.setText("");
-                    etNamaTempatUsaha.setText("");
-                    etAlamat.setText("");
-                    etKecamatan.setText("");
-                    etKelurahan.setText("");
-                    etJenisPajak.setText("");
-                    etGolongan.setText("");
-                }else{
-                    etAlamat.setText(itemNamaUsaha.getAlamat());
-                    etKecamatan.setText(itemNamaUsaha.getKecamatan());
-                    etKelurahan.setText(itemNamaUsaha.getKelurahan());
-                    etJenisPajak.setText(itemNamaUsaha.getJenispajak());
-                    etGolongan.setText(itemNamaUsaha.getGolongan());
-                }
-
-                //Toast.makeText(getApplicationContext(), "ID VERLAP"+id_data+",  NOP : "+country.getNop(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
+        queue.add(stringRequest);
     }
 
     private void getDetailData(String id_data, String filter) {
@@ -666,74 +857,211 @@ public class DataObjekPajak extends AppCompatActivity {
                 etGolongan.setText("");
             }
         }else if(spFilter.equalsIgnoreCase("2")){
-            int i = 0;
+//            int i = 0;
+//            namaUsahaArrayList.clear();
+//            namaUsahaArrayList.add(new ItemUsaha("0", "Pilih Nama Usaha"));
+//            List<ItemNamaUsaha> listData=databaseHandler.getDataByNamaUsaha(etNamaTempatUsahaC.getText().toString());
+//            for(ItemNamaUsaha f:listData){
+//                try {
+//                    namaUsahaArrayList.add(new ItemUsaha(f.getId_data(), f.getNama_tempat_usaha()));
+//                    i++;
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            adapterNamaUsaha = new ArrayAdapter<ItemUsaha>(DataObjekPajak.this, R.layout.spinner_item, namaUsahaArrayList);
+//            spinNamaUsaha.setAdapter(adapterNamaUsaha);
+//            spinNamaUsaha.setVisibility(View.VISIBLE);
+//
+//            if(i==0){
+//                etNamaWP.setText("");
+//                //alias dari id_op
+//                etNPWPD.setText("");
+//                etNamaTempatUsaha.setText("");
+//                etAlamat.setText("");
+//                etKecamatan.setText("");
+//                etKelurahan.setText("");
+//                etJenisPajak.setText("");
+//                etGolongan.setText("");
+//            }
 
-            namaUsahaArrayList.clear();
-            namaUsahaArrayList.add(new ItemUsaha("0", "Pilih Nama Usaha"));
-            List<ItemNamaUsaha> listData=databaseHandler.getDataByNamaUsaha(etNamaTempatUsahaC.getText().toString());
-            for(ItemNamaUsaha f:listData){
-                try {
-                    namaUsahaArrayList.add(new ItemUsaha(f.getId_data(), f.getNama_tempat_usaha()));
-                    i++;
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-
-            adapterNamaUsaha = new ArrayAdapter<ItemUsaha>(DataObjekPajak.this, R.layout.spinner_item, namaUsahaArrayList);
-            spinNamaUsaha.setAdapter(adapterNamaUsaha);
-            spinNamaUsaha.setVisibility(View.VISIBLE);
-
-            if(i==0){
-                etNamaWP.setText("");
-                //alias dari id_op
-                etNPWPD.setText("");
-                etNamaTempatUsaha.setText("");
-                etAlamat.setText("");
-                etKecamatan.setText("");
-                etKelurahan.setText("");
-                etJenisPajak.setText("");
-                etGolongan.setText("");
-            }
-
+//            Toast.makeText(this, "2", Toast.LENGTH_SHORT).show();
+            getDataServer(spFilter, etNamaTempatUsahaC.getText().toString());
         }else if(spFilter.equalsIgnoreCase("3")){
-            int i =0;
-            namaUsahaArrayList.clear();
-            namaUsahaArrayList.add(new ItemUsaha("0", "Pilih Nama Usaha"));
-            List<ItemNamaUsaha> listData=databaseHandler.getDataByNPWPD2(npwpd);
-            for(ItemNamaUsaha f:listData){
-                try {
-                    namaUsahaArrayList.add(new ItemUsaha(f.getId_data(), f.getNama_tempat_usaha()));
-                    i++;
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
+//            int i =0;
+//            namaUsahaArrayList.clear();
+//            namaUsahaArrayList.add(new ItemUsaha("0", "Pilih Nama Usaha"));
+//            List<ItemNamaUsaha> listData=databaseHandler.getDataByNPWPD2(npwpd);
+//            for(ItemNamaUsaha f:listData){
+//                try {
+//                    namaUsahaArrayList.add(new ItemUsaha(f.getId_data(), f.getNama_tempat_usaha()));
+//                    i++;
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            adapterNamaUsaha = new ArrayAdapter<ItemUsaha>(DataObjekPajak.this, R.layout.spinner_item, namaUsahaArrayList);
+//            spinNamaUsaha.setAdapter(adapterNamaUsaha);
+//            spinNamaUsaha.setVisibility(View.VISIBLE);
+//
+//            if(i==0){
+//                etNamaWP.setText("");
+//                //alias dari id_op
+//                etNPWPD.setText("");
+//                etNamaTempatUsaha.setText("");
+//                etAlamat.setText("");
+//                etKecamatan.setText("");
+//                etKelurahan.setText("");
+//                etJenisPajak.setText("");
+//                etGolongan.setText("");
+//            }
 
-            adapterNamaUsaha = new ArrayAdapter<ItemUsaha>(DataObjekPajak.this, R.layout.spinner_item, namaUsahaArrayList);
-            spinNamaUsaha.setAdapter(adapterNamaUsaha);
-            spinNamaUsaha.setVisibility(View.VISIBLE);
 
-            if(i==0){
-                etNamaWP.setText("");
-                //alias dari id_op
-                etNPWPD.setText("");
-                etNamaTempatUsaha.setText("");
-                etAlamat.setText("");
-                etKecamatan.setText("");
-                etKelurahan.setText("");
-                etJenisPajak.setText("");
-                etGolongan.setText("");
-            }
+            getDataServer(spFilter, npwpd);
         }
 
         cvDetail.setVisibility(View.VISIBLE);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
+    private void getDataServer(String spFilter, String cari) {
+        final ProgressDialog progressDialog = new ProgressDialog(DataObjekPajak.this);
+        progressDialog.setMessage("Mengambil data server...");
+        progressDialog.show();
+        progressDialog.setCanceledOnTouchOutside(false);
+        RequestQueue queue = Volley.newRequestQueue(DataObjekPajak.this);
+        String url = Config.URL +"getDataOPFilter";
+        Log.d("URL_FILER", "getDataServer: "+url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("result");
+
+                    int i;
+                    //jika spFilter = 2 => Nama Usaha
+                    if(spFilter.equalsIgnoreCase("2")){
+                        namaUsahaArrayList.clear();
+                        namaUsahaArrayList.add(new ItemUsaha("0", "Pilih Nama Usaha"));
+                        for (i=0;i<jsonArray.length();i++){
+                            try {
+
+                                JSONObject json = jsonArray.getJSONObject(i);
+                                namaUsahaArrayList.add(new ItemUsaha(json.getString("ID_INC"),json.getString("NAMA_USAHA")));
+
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                        adapterNamaUsaha = new ArrayAdapter<ItemUsaha>(DataObjekPajak.this, R.layout.spinner_item, namaUsahaArrayList);
+
+                        if(i==0){
+                            etNamaWP.setText("");
+                            //alias dari id_op
+                            etNPWPD.setText("");
+                            etNamaTempatUsaha.setText("");
+                            etAlamat.setText("");
+                            etKecamatan.setText("");
+                            etKelurahan.setText("");
+                            etJenisPajak.setText("");
+                            etGolongan.setText("");
+                        }
+
+                    }else{
+                        namaUsahaArrayList.clear();
+                        namaUsahaArrayList.add(new ItemUsaha("0", "Pilih Nama Usaha"));
+                        for (i=0;i<jsonArray.length();i++){
+                            try {
+
+                                JSONObject json = jsonArray.getJSONObject(i);
+                                namaUsahaArrayList.add(new ItemUsaha(json.getString("ID_INC"),json.getString("NAMA_USAHA")));
+
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                        adapterNamaUsaha = new ArrayAdapter<ItemUsaha>(DataObjekPajak.this, R.layout.spinner_item, namaUsahaArrayList);
+
+                        if(i==0){
+                            etNamaWP.setText("");
+                            //alias dari id_op
+                            etNPWPD.setText("");
+                            etNamaTempatUsaha.setText("");
+                            etAlamat.setText("");
+                            etKecamatan.setText("");
+                            etKelurahan.setText("");
+                            etJenisPajak.setText("");
+                            etGolongan.setText("");
+                        }
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    String info = e.getMessage();
+                    String activity = "PendataanActivity-getGolongan";
+                }
+                //Toast.makeText(LoginActivity.this, response, Toast.LENGTH_SHORT).show();
+                if(spFilter.equalsIgnoreCase("2")){
+                    spinNamaUsaha.setAdapter(adapterNamaUsaha);
+                    spinNamaUsaha.setVisibility(View.VISIBLE);
+                }else{
+                    spinNamaUsaha.setAdapter(adapterNamaUsaha);
+                    spinNamaUsaha.setVisibility(View.VISIBLE);
+                }
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                String info = error.getMessage();
+                String activity = "PendataanActivity-getGolongan";
+
+                Toast.makeText(DataObjekPajak.this, "Respon bermasalah !", Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("filter", spFilter);
+                params.put("value", cari);
+                System.out.println(spFilter+"//"+cari);
+
+                return params;
+            }
+        };
+        stringRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
+
+        queue.add(stringRequest);
+    }
+
     private void getDataFilter() {
         filterArrayList.add(new ItemFilter("0", "Pilih"));
-        filterArrayList.add(new ItemFilter("1", "Nama WP"));
+//        filterArrayList.add(new ItemFilter("1", "Nama WP"));
         filterArrayList.add(new ItemFilter("2", "Nama Tempat Usaha"));
         filterArrayList.add(new ItemFilter("3", "NPWPD"));
         adapterFilter = new ArrayAdapter<ItemFilter>(DataObjekPajak.this, R.layout.spinner_item, filterArrayList);

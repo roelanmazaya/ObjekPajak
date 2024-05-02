@@ -279,7 +279,7 @@ public class SinkronActivity extends AppCompatActivity {
 
                 Log.d("OP_TERUPDATE", String.valueOf(f.getId_data()) + "|" + f.getId_inc() + "|" + f.getNpwpd()
                         + "|" + f.getNama_usaha() + "|" + f.getNamawp() + "|" + f.getAlamat_usaha() + "|" + f.getNamakec()
-                        + "|" + f.getNamakel() + "|" + f.getLati() + "|" + f.getLongi() + "|" + f.getTgl_update() + "|" + gambar);
+                        + "|" + f.getNamakel() + "|" + f.getLati() + "|" + f.getLongi() + "|" + f.getTgl_update() + "|" + gambar+"|"+ f.getLainnya());
                 nomer++;
             }
         } catch (SQLiteException e) {
@@ -401,10 +401,10 @@ public class SinkronActivity extends AppCompatActivity {
 
                         if(jml_foto > 0){
                             msg = u.uploadDataUmum(f.getNama_usaha(), f.getAlamat_usaha(), f.getNpwpd(), f.getNamakec()
-                                    ,f.getNamakel(), f.getJenis_pajak(), f.getId_op(),lokasi, f.getTgl_update(), username, id_inc, bksDis, f.getKodekec(), f.getKodekel());
+                                    ,f.getNamakel(), f.getJenis_pajak(), f.getId_op(),lokasi, f.getTgl_update(), username, id_inc, bksDis, f.getKodekec(), f.getKodekel(), f.getLainnya());
                         }else{
                             msg = u.uploadDataUmum2(f.getNama_usaha(), f.getAlamat_usaha(), f.getNpwpd(), f.getNamakec()
-                                    ,f.getNamakel(), f.getJenis_pajak(), f.getId_op(),lokasi, f.getTgl_update(), username, id_inc, f.getKodekec(), f.getKodekel());
+                                    ,f.getNamakel(), f.getJenis_pajak(), f.getId_op(),lokasi, f.getTgl_update(), username, id_inc, f.getKodekec(), f.getKodekel(), f.getLainnya());
                         }
 
                         status++;
@@ -419,12 +419,21 @@ public class SinkronActivity extends AppCompatActivity {
                                         today
 
                                 ));
-                                databaseHandler.InsertHistory(new ItemData(
-                                        0,f.getId_inc(), f.getNama_usaha(),f.getNpwpd(),f.getAlamat_usaha(),
-                                        f.getKodekec(), f.getKodekel(),f.getNamakec(), f.getNamakel(),
-                                        f.getNamawp(), f.getJenis_pajak(), f.getNamapajak(),
-                                        f.getGolongan(), f.getId_op(),"3", f.getTgl_insert(),f.getTgl_update(),
-                                        today, f.getLati(), f.getLongi()
+//                                databaseHandler.InsertHistory(new ItemData(
+//                                        0,f.getId_inc(), f.getNama_usaha(),f.getNpwpd(),f.getAlamat_usaha(),
+//                                        f.getKodekec(), f.getKodekel(),f.getNamakec(), f.getNamakel(),
+//                                        f.getNamawp(), f.getJenis_pajak(), f.getNamapajak(),
+//                                        f.getGolongan(), f.getId_op(),"3", f.getTgl_insert(),f.getTgl_update(),
+//                                        today, f.getLati(), f.getLongi()
+//                                ));
+
+                                databaseHandler.InsertHistory(new ItemData(0,
+                                        f.getId_inc(), f.getNama_usaha(),
+                                        f.getNpwpd(),f.getAlamat_usaha(),
+                                        f.getKodekec(), f.getKodekel(),f.getNamakec(), f.getNamakel(), f.getNamawp(),
+                                        f.getJenis_pajak(), f.getNamapajak(),
+                                        f.getGolongan(), f.getId_op(), f.getLati(), f.getLongi(), "3",
+                                        f.getTgl_insert(), f.getTgl_update(), today, f.getLainnya()
                                 ));
                             }else{
                                 databaseHandler.updateDataMaster(new ItemData(
@@ -433,12 +442,21 @@ public class SinkronActivity extends AppCompatActivity {
                                         today
 
                                 ));
-                                databaseHandler.InsertHistory(new ItemData(
-                                        0,f.getId_inc(), f.getNama_usaha(),f.getNpwpd(),f.getAlamat_usaha(),
-                                        f.getKodekec(), f.getKodekel(),f.getNamakec(), f.getNamakel(),
-                                        f.getNamawp(), f.getJenis_pajak(), f.getNamapajak(),
-                                        f.getGolongan(), f.getId_op(),"01", f.getTgl_insert(),f.getTgl_update(),
-                                        today, f.getLati(), f.getLongi()
+//                                databaseHandler.InsertHistory(new ItemData(
+//                                        0,f.getId_inc(), f.getNama_usaha(),f.getNpwpd(),f.getAlamat_usaha(),
+//                                        f.getKodekec(), f.getKodekel(),f.getNamakec(), f.getNamakel(),
+//                                        f.getNamawp(), f.getJenis_pajak(), f.getNamapajak(),
+//                                        f.getGolongan(), f.getId_op(),"01", f.getTgl_insert(),f.getTgl_update(),
+//                                        today, f.getLati(), f.getLongi()
+//                                ));
+
+                                databaseHandler.InsertHistory(new ItemData(0,
+                                        f.getId_inc(), f.getNama_usaha(),
+                                        f.getNpwpd(),f.getAlamat_usaha(),
+                                        f.getKodekec(), f.getKodekel(),f.getNamakec(), f.getNamakel(), f.getNamawp(),
+                                        f.getJenis_pajak(), f.getNamapajak(),
+                                        f.getGolongan(), f.getId_op(), f.getLati(), f.getLongi(), "01",
+                                        f.getTgl_insert(), f.getTgl_update(), today, f.getLainnya()
                                 ));
                             }
 

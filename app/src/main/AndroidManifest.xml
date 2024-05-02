@@ -7,6 +7,10 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -35,7 +39,8 @@
         android:roundIcon="@drawable/logo_branding_kab_malang"
         android:supportsRtl="true"
         android:theme="@style/AppThemeNoActionBar">
-        <activity android:name=".coba.MainCoba"></activity>
+        <activity android:name=".pendataan.MainActivityPendatan"></activity>
+        <activity android:name=".coba.MainCoba" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -146,13 +151,14 @@
         <activity android:name=".lookup.LookupActivity" />
         <activity
             android:name=".pendataan.PendataanActivity"
-            android:label="Pendataan dan Pemutakhiran"
-            android:parentActivityName=".MainActivity"
+            android:label="Pendataan Objek Pajak"
+            android:parentActivityName=".pendataan.MainActivityPendatan"
             android:theme="@style/AppThemeNoActionBar.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dnhsolution.objekpajak.MainActivity" />
+                android:value="com.dnhsolution.objekpajak.pendataan.MainActivityPendatan" />
         </activity>
+
         <activity
             android:name=".data_op.DataObjekPajak"
             android:label="Data Objek Pajak"

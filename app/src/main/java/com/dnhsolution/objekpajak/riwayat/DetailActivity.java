@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -58,6 +59,12 @@ public class DetailActivity extends AppCompatActivity {
     int RecyclerViewClickedItemPos;
     View ChildView;
     Toolbar mToolbar;
+    //khusus reklame
+    EditText etPanjang, etLebar, etLokasiPasang;
+    EditText  etSisi, etTeks;
+    CheckBox cbKetinggian;
+    CheckBox cbRokok;
+    LinearLayout LReklame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +92,19 @@ public class DetailActivity extends AppCompatActivity {
         etIdInc = (EditText)findViewById(R.id.etIdInc);
         etNpwpd = (EditText)findViewById(R.id.etNpwpd);
         btnKembali = (Button)findViewById(R.id.btnKembali);
+
+        //reklame
+        etPanjang = (EditText)findViewById(R.id.etPanjang);
+        etLebar = (EditText)findViewById(R.id.etLebar);
+        etSisi = (EditText)findViewById(R.id.etSisi);
+        etTeks = (EditText)findViewById(R.id.etTeks);
+        etLokasiPasang = (EditText)findViewById(R.id.etLokasiPasang);
+        LReklame = (LinearLayout)findViewById(R.id.LReklame);
+
+        cbKetinggian = (CheckBox)findViewById(R.id.cbKetinggian);
+        cbRokok = (CheckBox)findViewById(R.id.cbRokok);
+
+        LReklame.setVisibility(View.GONE);
 
         //camera
         rvBerkas = (RecyclerView)findViewById(R.id.rvBerkas);
@@ -165,6 +185,67 @@ public class DetailActivity extends AppCompatActivity {
                 etKelurahan.setText(f.getNamakel());
                 etJenisPajak.setText(f.getNamapajak());
                 etGolongan.setText(f.getGolongan());
+
+                System.out.println("LAINNYA :"+f.getLainnya());
+
+                if(f.getJenis_pajak().equalsIgnoreCase("04")){
+                    String lain_lain = f.getLainnya();
+                    String panjang = "-", lebar = "-", sisi = "-", lokasi="-", rokok = "0", ketinggian = "0", teks = "-";
+                    String[] exp = lain_lain.split("/");
+                    System.out.println(exp.length);
+                    if(exp.length>0){
+                        for (int i = 0; i < exp.length; i++) {
+                            System.out.println("lain_lain ke-"+i+" : "+exp[i]);
+                        }
+                        if(!exp[0].equalsIgnoreCase("0")){
+                            panjang = exp[0];
+                        }
+
+                        if(!exp[1].equalsIgnoreCase("0")){
+                            lebar = exp[1];
+                        }
+                        if(exp.length > 2) {
+                            if (!exp[2].equalsIgnoreCase("0")) {
+                                sisi = exp[2];
+                            }
+                            if(!exp[3].equalsIgnoreCase("0")){
+                                lokasi = exp[3];
+                            }
+
+                            if(exp.length > 4){
+                                if(!exp[4].equalsIgnoreCase("0")){
+                                    rokok = exp[4];
+                                }
+                                if(!exp[5].equalsIgnoreCase("")){
+                                    ketinggian = exp[5];
+                                }
+                                if(!exp[6].equalsIgnoreCase("")){
+                                    teks = exp[6];
+                                }
+                            }
+                        }
+
+                        etPanjang.setText(panjang);
+                        etLebar.setText(lebar);
+                        etSisi.setText(sisi);
+                        etTeks.setText(teks);
+                        etLokasiPasang.setText(lokasi);
+                        if(ketinggian.equalsIgnoreCase("0")){
+                            cbKetinggian.setChecked(false);
+                        }else{
+                            cbKetinggian.setChecked(true);
+                        }
+                        if(rokok.equalsIgnoreCase("1")){
+                            cbRokok.setChecked(true);
+                        }else{
+                            cbRokok.setChecked(false);
+                        }
+                        LReklame.setVisibility(View.VISIBLE);
+                    }
+
+
+                }
+
                 if(f.getLati().equalsIgnoreCase("null")){
                     etLat.setText("-");
                 }else{

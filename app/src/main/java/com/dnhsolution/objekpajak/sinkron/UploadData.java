@@ -23,6 +23,7 @@ import java.util.Date;
 
 public class UploadData {
     public static final String UPLOAD_URL= Config.URL+"TambahData";
+//    public static final String UPLOAD_URL= Config.URL+"TambahDataDev";
     public static final String UPLOAD_URL_FILE= Config.URL+"TambahDataFile";
 
     private int serverResponseCode;
@@ -30,7 +31,7 @@ public class UploadData {
     public String uploadDataUmum(
             String nama_usaha, String alamat_usaha, String npwpd, String nm_kecamatan,
             String nm_kelurahan, String jenis_pajak, String id_op, String lokasi,
-            String date_insert, String username, String id_inc, final ArrayList<String> foto, String kode_kec, String kode_kel) {
+            String date_insert, String username, String id_inc, final ArrayList<String> foto, String kode_kec, String kode_kel, String lainnya) {
 
         HttpURLConnection conn = null;
         DataOutputStream dos = null;
@@ -157,6 +158,13 @@ public class UploadData {
                     + lineEnd);
             dos.writeBytes(lineEnd);
             dos.writeBytes(kode_kel);
+            dos.writeBytes(lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"lainnya\""
+                    + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(lainnya);
             dos.writeBytes(lineEnd);
 
             for (int x = 0; x < foto.size(); x++) {
@@ -239,7 +247,7 @@ public class UploadData {
     public String uploadDataUmum2(
             String nama_usaha, String alamat_usaha, String npwpd, String nm_kecamatan,
             String nm_kelurahan, String jenis_pajak, String id_op, String lokasi,
-            String date_insert, String username, String id_inc, String kode_kec, String kode_kel) {
+            String date_insert, String username, String id_inc, String kode_kec, String kode_kel, String lainnya) {
 
         HttpURLConnection conn = null;
         DataOutputStream dos = null;
@@ -366,6 +374,13 @@ public class UploadData {
                     + lineEnd);
             dos.writeBytes(lineEnd);
             dos.writeBytes(kode_kel);
+            dos.writeBytes(lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"lainnya\""
+                    + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(lainnya);
             dos.writeBytes(lineEnd);
 
             serverResponseCode = conn.getResponseCode();

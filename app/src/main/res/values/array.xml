@@ -52,4 +52,11 @@
         <item>@color/ic_branding_1</item>
         <item>@color/ic_branding_2</item>
     </integer-array>
+
+    <string-array name="spAllBrand">
+        <item>Pilih</item>
+        <item>All Brand</item>
+        <item>Rokok</item>
+        <item>Alkohol</item>
+    </string-array>
 </resources>

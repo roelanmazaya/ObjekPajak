@@ -361,15 +361,29 @@ public class RiwayatActivity extends AppCompatActivity {
                         JSONObject json = data.getJSONObject(i);
                         String today = getCurrentDate();
 
+//                        databaseHandler.InsertHistory(new ItemData(
+//                                0,json.getString("id_inc"), json.getString("nama_usaha"),
+//                                json.getString("npwpd"),json.getString("alamat_usaha"),
+//                                "", "",
+//                                json.getString("namakec"), json.getString("namakel"),
+//                                "", json.getString("jenis_pajak"), json.getString("namapajak"),
+//                                json.getString("golongan"), json.getString("id_op"),"3",
+//                                json.getString("tgl_insert"),json.getString("tgl_update"),json.getString("tgl_sinkron")
+//                                , json.getString("lati"), json.getString("longi")
+//                        ));
+
+                        String lainnya = json.getString("panjang")+"/"+json.getString("lebar")+"/"+
+                                json.getString("tinggi");
+
                         databaseHandler.InsertHistory(new ItemData(
                                 0,json.getString("id_inc"), json.getString("nama_usaha"),
                                 json.getString("npwpd"),json.getString("alamat_usaha"),
                                 "", "",
                                 json.getString("namakec"), json.getString("namakel"),
                                 "", json.getString("jenis_pajak"), json.getString("namapajak"),
-                                json.getString("golongan"), json.getString("id_op"),"3",
+                                json.getString("golongan"), json.getString("id_op"), json.getString("lati"), json.getString("longi"),"3",
                                 json.getString("tgl_insert"),json.getString("tgl_update"),json.getString("tgl_sinkron")
-                                , json.getString("lati"), json.getString("longi")
+                                ,lainnya
                         ));
 
                         status = i+1;

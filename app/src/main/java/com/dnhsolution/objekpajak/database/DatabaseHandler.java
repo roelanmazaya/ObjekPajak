@@ -43,6 +43,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public final String col_namakec="namakec";
     public final String col_namakel="namakel";
     public final String col_namawp="namawp";
+    public final String col_lainnya="lainnya";
+
 
     //kolom tb_gambar
     public final String col_id_data_gambar = "id_data_gambar";
@@ -61,14 +63,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + col_nama_usaha + " TEXT," + col_alamat_usaha + " TEXT," + col_kodekec + " TEXT," + col_kodekel + " TEXT," + col_jenis_pajak + " TEXT,"
                 + col_namakec + " TEXT," + col_namakel + " TEXT," + col_namawp + " TEXT," + col_namapajak + " TEXT,"
                 + col_golongan + " TEXT," + col_id_op + " TEXT," + col_lati + " TEXT," + col_longi + " TEXT," + col_status + " TEXT,"
-                + col_tgl_insert + " TEXT," + col_tgl_update + " TEXT," + col_tgl_sync + " TEXT" +")";
+                + col_tgl_insert + " TEXT," + col_tgl_update + " TEXT," + col_tgl_sync + " TEXT," + col_lainnya + " TEXT" +")";
 
         String CREATE_TABEL_HISTORY = "CREATE TABLE " + TABLE_HISTORY + "("
                 + col_id_data + " INTEGER PRIMARY KEY AUTOINCREMENT," + col_id_inc + " TEXT," + col_npwpd + " TEXT,"
                 + col_nama_usaha + " TEXT," + col_alamat_usaha + " TEXT," + col_kodekec + " TEXT," + col_kodekel + " TEXT," + col_jenis_pajak + " TEXT,"
                 + col_namakec + " TEXT," + col_namakel + " TEXT," + col_namawp + " TEXT," + col_namapajak + " TEXT,"
                 + col_golongan + " TEXT," + col_id_op + " TEXT," + col_lati + " TEXT," + col_longi + " TEXT," + col_status + " TEXT,"
-                + col_tgl_insert + " TEXT," + col_tgl_update + " TEXT," + col_tgl_sync + " TEXT" +")";
+                + col_tgl_insert + " TEXT," + col_tgl_update + " TEXT," + col_tgl_sync + " TEXT," + col_lainnya + " TEXT" +")";
 
         String CREATE_TABEL_GAMBAR = "CREATE TABLE " + TABLE_GAMBAR + "("
                 + col_id_data_gambar + " INTEGER PRIMARY KEY AUTOINCREMENT," + col_id_inc_gambar + " TEXT," + col_path + " TEXT"+")";
@@ -160,6 +162,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(col_namawp, "-");
         values.put(col_kodekec, id.getKodekec());
         values.put(col_kodekel, id.getKodekel());
+        values.put(col_lainnya, id.getLainnya());
 
         db.insert(TABLE_MASTER, null,values);
         db.close();
@@ -189,6 +192,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(col_kodekec, id.getKodekec());
         values.put(col_kodekel, id.getKodekel());
         values.put(col_id_inc, id.getId_inc());
+        values.put(col_lainnya, id.getLainnya());
 
         db.insert(TABLE_MASTER, null,values);
         db.close();
@@ -329,7 +333,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String selectQuery = "SELECT "+col_id_data+","+col_id_inc+","+col_npwpd+
                 ","+col_namawp+","+col_nama_usaha+","+col_alamat_usaha+
                 ","+col_namakec+","+col_namakel+","+col_lati+","+col_longi+
-                ","+col_tgl_update+","+col_jenis_pajak+","+col_id_op+
+                ","+col_tgl_update+","+col_jenis_pajak+","+col_id_op+","+col_lainnya+
                 " FROM " + TABLE_MASTER +" WHERE "+ col_status + " IN ('2', '00') ORDER BY "+col_tgl_update+" DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -353,6 +357,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 svf.setTgl_update(cursor.getString(10));
                 svf.setJenis_pajak(cursor.getString(11));
                 svf.setId_op(cursor.getString(12));
+                svf.setLainnya(cursor.getString(13));
 
                 // Menambahkan data ke dalam list
                 list.add(svf);
@@ -563,7 +568,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String selectQuery = "SELECT "+col_id_inc+","+col_nama_usaha+","+col_namawp+
                 ","+col_alamat_usaha+","+col_namakec+","+col_namakel+
                 ","+col_namapajak+","+col_golongan+","+col_lati+","+col_longi+
-                ","+col_npwpd+" FROM " + TABLE_MASTER +" WHERE "+ col_id_data + "=="+id_data;
+                ","+col_npwpd+","+col_lainnya+","+col_jenis_pajak+" FROM " + TABLE_MASTER +" WHERE "+ col_id_data + "=="+id_data;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -584,6 +589,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 svf.setLati(cursor.getString(8));
                 svf.setLongi(cursor.getString(9));
                 svf.setNpwpd(cursor.getString(10));
+                svf.setLainnya(cursor.getString(11));
+                svf.setJenis_pajak(cursor.getString(12));
 
                 // Menambahkan data ke dalam list
                 list.add(svf);
@@ -681,6 +688,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(col_tgl_update, id.getTgl_update());
         values.put(col_kodekec, id.getKodekec());
         values.put(col_kodekel, id.getKodekel());
+        values.put(col_lainnya, id.getLainnya());
 
         return db.update(TABLE_MASTER, values, col_id_inc + " = ?",
                 new String[] { String.valueOf(id.getId_inc()) });
@@ -713,7 +721,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ","+col_tgl_update+","+col_jenis_pajak+","+col_id_op+
                 ","+col_namapajak+","+col_golongan+
                 ","+col_kodekec+","+col_kodekel+
-                ","+col_tgl_insert+","+col_status+
+                ","+col_tgl_insert+","+col_status+","+col_lainnya+
                 " FROM " + TABLE_MASTER +" WHERE "+ col_status + " IN ('2', '00')  ORDER BY "+col_tgl_update+" DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -743,6 +751,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 svf.setKodekel(cursor.getString(16));
                 svf.setTgl_insert(cursor.getString(17));
                 svf.setStatus(cursor.getString(18));
+                svf.setLainnya(cursor.getString(19));
 
                 // Menambahkan data ke dalam list
                 list.add(svf);
@@ -778,6 +787,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(col_kodekec, id.getKodekec());
         values.put(col_kodekel, id.getKodekel());
         values.put(col_id_inc, id.getId_inc());
+        values.put(col_lainnya, id.getLainnya());
 
         db.insert(TABLE_HISTORY, null,values);
         db.close();
@@ -883,7 +893,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String selectQuery = "SELECT "+col_id_inc+","+col_nama_usaha+","+col_namawp+
                 ","+col_alamat_usaha+","+col_namakec+","+col_namakel+
                 ","+col_namapajak+","+col_golongan+","+col_lati+","+col_longi+
-                ","+col_npwpd+" FROM " + TABLE_HISTORY +" WHERE "+ col_id_data + "=="+id_data;
+                ","+col_npwpd+","+col_lainnya+","+col_jenis_pajak+
+                " FROM " + TABLE_HISTORY +" WHERE "+ col_id_data + "=="+id_data;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -904,6 +915,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 svf.setLati(cursor.getString(8));
                 svf.setLongi(cursor.getString(9));
                 svf.setNpwpd(cursor.getString(10));
+                svf.setLainnya(cursor.getString(11));
+                svf.setJenis_pajak(cursor.getString(12));
 
                 // Menambahkan data ke dalam list
                 list.add(svf);
